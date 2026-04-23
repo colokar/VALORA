@@ -1,0 +1,14 @@
+.venv/
+node_modules/
+
+Excel/
+INFORME/Excel/
+
+datos.json
+INFORME/datos.json
+
+*.xlsx
+*.xls
+
+__pycache__/
+*.pyc

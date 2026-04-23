@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Depurador de Python: Archivo actual",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Open index1.html",
+            "file": "c:\\Users\\dmolina\\Desktop\\INFORME CNRT INFORME V 27-02-2026\\INFORME\\index1.html"
+        }
+    ]
+}

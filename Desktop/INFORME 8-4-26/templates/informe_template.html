@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Regiones</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Informe de Regiones</h1>
+    <p>Este informe muestra la cantidad de registros por región, ordenado descendentemente.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre de Región</th>
+                <th>Cantidad de Registros</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for region in regiones %}
+            <tr>
+                <td>{{ region.nombre_region }}</td>
+                <td>{{ region.cantidad }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

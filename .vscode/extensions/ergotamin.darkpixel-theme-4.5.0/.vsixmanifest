@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Language="en-US" Id="darkpixel-theme" Version="4.5.0" Publisher="ergotamin"/>
+    <DisplayName>Dark Pixel - join the bright side of dark.</DisplayName>
+    <Description xml:space="preserve">Dark Pixel - Editor theme and language syntax-highlighting</Description>
+    <Tags>dark,theme,contrast,darkpixel,ergotamin,color-theme,snippet,keybindings,c,C,posix-c,__ext_c,__ext_h,cpp,C++,Cpp,__ext_cpp,__ext_cc,__ext_cxx,__ext_hpp,__ext_hh,__ext_hxx,__ext_ino,__ext_inl,makefile,Makefile,__ext_mk,__ext_make,shellscript,Shell Script,bash,sh,zsh,__ext_sh,__ext_bash,__ext_bashrc,__ext_bash_aliases,__ext_bash_profile,__ext_bash_login,__ext_ebuild,__ext_install,__ext_profile,__ext_bash_logout,__ext_zsh,__ext_zshrc,__ext_zprofile,__ext_zlogin,__ext_zlogout,__ext_zshenv,__ext_zshtheme,awk,gawk,__ext_awk,__ext_gawk,__ext_AWK,__ext_GAWK</Tags>
+    <Categories>Themes,Programming Languages,Snippets</Categories>
+    <GalleryFlags>Public</GalleryFlags>
+    <Badges></Badges>
+    <Properties>
+      <Property Id="Microsoft.VisualStudio.Code.Engine" Value="*" />
+      <Property Id="Microsoft.VisualStudio.Code.ExtensionDependencies" Value="" />
+      <Property Id="Microsoft.VisualStudio.Code.ExtensionPack" Value="" />
+      <Property Id="Microsoft.VisualStudio.Code.LocalizedLanguages" Value="" />
+      
+        <Property Id="Microsoft.VisualStudio.Services.Links.Source" Value="https://github.com/ergotamin/vscode-theme-darkpixel.git" />
+        <Property Id="Microsoft.VisualStudio.Services.Links.Getstarted" Value="https://github.com/ergotamin/vscode-theme-darkpixel.git" />
+        
+          <Property Id="Microsoft.VisualStudio.Services.Links.GitHub" Value="https://github.com/ergotamin/vscode-theme-darkpixel.git" />
+        
+      
+      
+      
+      
+      
+      <Property Id="Microsoft.VisualStudio.Services.GitHubFlavoredMarkdown" Value="true" />
+      
+      
+    </Properties>
+    <License>extension/LICENSE.txt</License>
+    <Icon>extension/static/icon.png</Icon>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Code"/>
+  </Installation>
+  <Dependencies/>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Services.Content.Details" Path="extension/README.md" Addressable="true" /><Asset Type="Microsoft.VisualStudio.Services.Content.Changelog" Path="extension/CHANGELOG.md" Addressable="true" /><Asset Type="Microsoft.VisualStudio.Services.Content.License" Path="extension/LICENSE.txt" Addressable="true" /><Asset Type="Microsoft.VisualStudio.Services.Icons.Default" Path="extension/static/icon.png" Addressable="true" />
+  </Assets>
+</PackageManifest>

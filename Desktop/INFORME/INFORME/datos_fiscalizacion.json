@@ -1,0 +1,169 @@
+{
+  "registros": [
+    {
+      "fecha": "2026-03-01",
+      "region": "AMBA",
+      "tipo": "CARGAS",
+      "vc": 45,
+      "actas": 8,
+      "ret": 2
+    },
+    {
+      "fecha": "2026-03-01",
+      "region": "AMBA",
+      "tipo": "PASAJEROS",
+      "vc": 32,
+      "actas": 5,
+      "ret": 1
+    },
+    {
+      "fecha": "2026-03-01",
+      "region": "COSTA",
+      "tipo": "CARGAS",
+      "vc": 28,
+      "actas": 4,
+      "ret": 1
+    },
+    {
+      "fecha": "2026-03-01",
+      "region": "COSTA",
+      "tipo": "PASAJEROS",
+      "vc": 15,
+      "actas": 2,
+      "ret": 0
+    },
+    {
+      "fecha": "2026-03-02",
+      "region": "BA",
+      "tipo": "CARGAS",
+      "vc": 52,
+      "actas": 10,
+      "ret": 3
+    },
+    {
+      "fecha": "2026-03-02",
+      "region": "BA",
+      "tipo": "PASAJEROS",
+      "vc": 38,
+      "actas": 6,
+      "ret": 1
+    },
+    {
+      "fecha": "2026-03-02",
+      "region": "CEN",
+      "tipo": "CARGAS",
+      "vc": 35,
+      "actas": 6,
+      "ret": 2
+    },
+    {
+      "fecha": "2026-03-02",
+      "region": "CEN",
+      "tipo": "PASAJEROS",
+      "vc": 22,
+      "actas": 3,
+      "ret": 0
+    },
+    {
+      "fecha": "2026-03-03",
+      "region": "CUY",
+      "tipo": "CARGAS",
+      "vc": 25,
+      "actas": 3,
+      "ret": 1
+    },
+    {
+      "fecha": "2026-03-03",
+      "region": "CUY",
+      "tipo": "PASAJEROS",
+      "vc": 18,
+      "actas": 2,
+      "ret": 0
+    },
+    {
+      "fecha": "2026-03-03",
+      "region": "NEA",
+      "tipo": "CARGAS",
+      "vc": 30,
+      "actas": 5,
+      "ret": 1
+    },
+    {
+      "fecha": "2026-03-03",
+      "region": "NEA",
+      "tipo": "PASAJEROS",
+      "vc": 20,
+      "actas": 3,
+      "ret": 1
+    },
+    {
+      "fecha": "2026-03-04",
+      "region": "NOA",
+      "tipo": "CARGAS",
+      "vc": 40,
+      "actas": 7,
+      "ret": 2
+    },
+    {
+      "fecha": "2026-03-04",
+      "region": "NOA",
+      "tipo": "PASAJEROS",
+      "vc": 25,
+      "actas": 4,
+      "ret": 1
+    },
+    {
+      "fecha": "2026-03-04",
+      "region": "PAT",
+      "tipo": "CARGAS",
+      "vc": 33,
+      "actas": 5,
+      "ret": 1
+    },
+    {
+      "fecha": "2026-03-04",
+      "region": "PAT",
+      "tipo": "PASAJEROS",
+      "vc": 20,
+      "actas": 3,
+      "ret": 0
+    },
+    {
+      "fecha": "2026-03-05",
+      "region": "AMBA",
+      "tipo": "CARGAS",
+      "vc": 48,
+      "actas": 9,
+      "ret": 2
+    },
+    {
+      "fecha": "2026-03-05",
+      "region": "AMBA",
+      "tipo": "PASAJEROS",
+      "vc": 35,
+      "actas": 6,
+      "ret": 1
+    },
+    {
+      "fecha": "2026-03-05",
+      "region": "COSTA",
+      "tipo": "CARGAS",
+      "vc": 30,
+      "actas": 5,
+      "ret": 1
+    },
+    {
+      "fecha": "2026-03-05",
+      "region": "COSTA",
+      "tipo": "PASAJEROS",
+      "vc": 16,
+      "actas": 2,
+      "ret": 0
+    }
+  ],
+  "metadata": {
+    "fecha_generacion": "2026-03-05",
+    "total_registros": 20,
+    "versión": "1.0"
+  }
+}

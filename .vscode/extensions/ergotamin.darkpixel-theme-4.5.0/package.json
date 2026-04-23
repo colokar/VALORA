@@ -1,0 +1,201 @@
+{
+	"name": "darkpixel-theme",
+	"displayName": "Dark Pixel - join the bright side of dark.",
+	"description": "Dark Pixel - Editor theme and language syntax-highlighting",
+	"version": "4.5.0",
+	"icon": "static/icon.png",
+	"publisher": "ergotamin",
+	"author": {
+		"name": "Marcel Bobolz",
+		"email": "ergotamin.source@gmail.com",
+		"url": "https://ergotamin.github.io"
+	},
+	"engines": {
+		"vscode": "*"
+	},
+	"keywords": [
+		"dark",
+		"theme",
+		"contrast",
+		"darkpixel",
+		"ergotamin"
+	],
+	"categories": [
+		"Themes",
+		"Programming Languages",
+		"Snippets"
+	],
+	"contributes": {
+		"keybindings": [
+			{
+				"key": "delete",
+				"command": "deleteFile",
+				"when": "explorerViewletVisible && filesExplorerFocus && !explorerResourceIsRoot && !inputFocus"
+			}
+		],
+		"languages": [
+			{
+				"id": "c",
+				"extensions": [
+					".c",
+					".h"
+				],
+				"aliases": [
+					"C",
+					"c",
+					"posix-c"
+				],
+				"configuration": "./lang/c-language-configuration.json"
+			},
+			{
+				"id": "cpp",
+				"extensions": [
+					".cpp",
+					".cc",
+					".cxx",
+					".hpp",
+					".hh",
+					".hxx",
+					".h",
+					".ino",
+					".inl"
+				],
+				"aliases": [
+					"C++",
+					"Cpp",
+					"cpp"
+				],
+				"configuration": "./lang/c-language-configuration.json"
+			},
+			{
+				"id": "makefile",
+				"aliases": [
+					"Makefile",
+					"makefile"
+				],
+				"extensions": [
+					".mk",
+					".make"
+				],
+				"filenames": [
+					"Makefile",
+					"makefile",
+					"GNUmakefile"
+				],
+				"configuration": "./lang/make-language-configuration.json"
+			},
+			{
+				"id": "shellscript",
+				"aliases": [
+					"Shell Script",
+					"shellscript",
+					"bash",
+					"sh",
+					"zsh"
+				],
+				"extensions": [
+					".sh",
+					".bash",
+					".bashrc",
+					".bash_aliases",
+					".bash_profile",
+					".bash_login",
+					".ebuild",
+					".install",
+					".profile",
+					".bash_logout",
+					".zsh",
+					".zshrc",
+					".zprofile",
+					".zlogin",
+					".zlogout",
+					".zshenv",
+					".zsh-theme"
+				],
+				"filenames": [
+					"PKGBUILD"
+				],
+				"firstLine": "^#\\s*!.*\\b(bash|zsh|sh|tcsh).*|^#\\s*-\\*-[^*]*mode:\\s*shell-script[^*]*-\\*-",
+				"configuration": "./lang/shell-language-configuration.json",
+				"mimetypes": [
+					"text/x-shellscript"
+				]
+			},
+			{
+				"id": "awk",
+				"aliases": [
+					"awk",
+					"gawk"
+				],
+				"extensions": [
+					".awk",
+					".gawk",
+					".AWK",
+					".GAWK"
+				],
+				"firstLine": "^#\\s*!.*\\b(awk|gawk).*|^#\\s*-\\*-[^*]*mode:\\s*awk-script[^*]*-\\*-",
+				"configuration": "./lang/awk-language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "awk",
+				"scopeName": "source.awk",
+				"path": "./syntaxes/awk.json"
+			},
+			{
+				"language": "c",
+				"scopeName": "source.c",
+				"path": "./syntaxes/c.json"
+			},
+			{
+				"language": "cpp",
+				"scopeName": "source.cpp",
+				"path": "./syntaxes/cpp.json"
+			},
+			{
+				"scopeName": "source.c.platform",
+				"path": "./syntaxes/platform.json"
+			},
+			{
+				"language": "makefile",
+				"scopeName": "source.makefile",
+				"path": "./syntaxes/make.json"
+			},
+			{
+				"language": "shellscript",
+				"scopeName": "source.shell",
+				"path": "./syntaxes/shellscript.json"
+			}
+		],
+		"themes": [
+			{
+				"label": "DarkPixel - Theme",
+				"uiTheme": "vs-dark",
+				"path": "./themes/DarkPixel.json"
+			}
+		],
+		"snippets": [
+			{
+				"language": "json",
+				"path": "./snippets/JSON.json"
+			}
+		]
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ergotamin/vscode-theme-darkpixel.git"
+	},
+	"devDependencies": {
+		"vscode": "^1.20.0"
+	},
+	"license": "MIT",
+	"__metadata": {
+		"id": "c233420d-ee46-4ebb-9731-1b9af714eaee",
+		"publisherDisplayName": "ergotamin",
+		"publisherId": "f6c01b3c-44ce-4fba-8f83-586df9731246",
+		"installedTimestamp": 1771465957249,
+		"targetPlatform": "undefined",
+		"size": 422291
+	}
+}
