@@ -1,3 +1,9 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "chat.tools.terminal.autoApprove": {
+        "/^cd c:\\\\Users\\\\CNRT\\\\Desktop\\\\INFORME; git commit -m \"Refactor dashboard: API-first integration with Flask backend\n\n- Migrated frontend from static JSON to live Flask API\n- Updated Generador\\.py to serve /resumen endpoint from Excel files\n- Fixed Excel path from /archivos to /Excel directory\n- Updated actualizar_tabla_regiones\\.js to fetch\\('/resumen'\\) dynamically\n- Added CORS support and proper error handling\n- Dashboard now displays real-time data from fiscalizacion Trimestral\\.\\.xls\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }

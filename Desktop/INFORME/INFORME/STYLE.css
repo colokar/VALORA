@@ -15,6 +15,7 @@ PALETA DE COLORES OFICIAL
     --gris-claro: #c9cfe6;
     --dorado: #e6b85f;
     --blanco: #ffffff;
+    --factor-escala: 1;
 }
 
 * {
@@ -122,18 +123,19 @@ button:hover{
     align-items: center;
     gap: 30px;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .vc-izquierda {
-    width: 100%;
+    flex: 1 1 minmax(300px, 56%);
     max-width: 56%;
-    min-width: 300px;
+    width: 100%;
 }
 
 .vc-derecha {
-    width: 100%;
+    flex: 1 1 minmax(280px, 40%);
     max-width: 40%;
-    min-width: 280px;
+    width: 100%;
     display: flex;
     justify-content: center;
 }
@@ -163,8 +165,8 @@ button:hover{
 }
 
 .vc-icono {
-    width: 40px;
-    height: 40px;
+    width: calc(var(--factor-escala) * 40px);
+    height: calc(var(--factor-escala) * 40px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -291,9 +293,10 @@ button:hover{
 }
 
 .vc-indicador img {
-    width: 32px;
-    height: 32px;
+    width: calc(var(--factor-escala) * 32px);
+    height: auto;
     object-fit: contain;
+    aspect-ratio: 1 / 1;
 }
 
 #grafico-vc {
@@ -341,14 +344,14 @@ button:hover{
 }
 
 .vc-indicador.retenciones {
-    top: 20px;
-    right: -180px;
+    top: 4%;
+    right: -13%;
     color: #d4a64a;
 }
 
 .vc-indicador.actas {
-    top: 100px;
-    right: -180px;
+    top: 18%;
+    right: -13%;
     color: #6c7285;
 }
 
@@ -377,14 +380,16 @@ button:hover{
 }
 
 .logo-ministerio {
-    height: 150px;
+    height: calc(var(--factor-escala) * 150px);
     width: auto;
+    max-width: 100%;
     object-fit: contain;
 }
 
 .logo-cnrt {
-    height: 75px;
+    height: calc(var(--factor-escala) * 75px);
     width: auto;
+    max-width: 100%;
     object-fit: contain;
 }
 
@@ -904,9 +909,9 @@ background: #e6b85f;
 
 .region {
     position: absolute;
-    width: 230px;
-    min-width: 230px;
-    font-size: 15px;
+    width: clamp(200px, 18vw, 240px);
+    min-width: 180px;
+    font-size: clamp(0.85rem, 1vw, 0.95rem);
     color: #1f2a44;
 }
 
@@ -948,141 +953,141 @@ background: #e6b85f;
 }
 
 .region.noa {
-    top: 10px;
-    left: -270px;
+    top: 2.5%;
+    left: -26%;
 }
 
 .region.noa .linea {
-    top: 46px;
-    left: 190px;
-    width: 150px;
-    height: 2px;
+    top: 2.7rem;
+    left: 70%;
+    width: 18vw;
+    height: 0.15rem;
     background: #1f2a44;
 }
 
 .region.noa .linea::after {
     content: "";
     position: absolute;
-    left: 150px;
-    top: -10px;
-    width: 60px;
-    height: 2px;
+    left: 100%;
+    top: -0.6rem;
+    width: 6vw;
+    height: 0.15rem;
     background: #1f2a44;
     transform: rotate(15deg);
     transform-origin: left center;
 }
 
 .region.noa .punto {
-    top: 33px;
-    left: 405px;
+    top: 2.2rem;
+    left: 88%;
 }
 
 .region.cuyo {
-    top: 170px;
-    left: -270px;
+    top: 14%;
+    left: -24%;
 }
 
 .region.cuyo .linea {
-    top: 40px;
-    left: 190px;
-    width: 120px;
-    height: 2px;
+    top: 2.5rem;
+    left: 70%;
+    width: 16vw;
+    height: 0.15rem;
     background: #1f2a44;
 }
 
 .region.cuyo .linea::after {
     content: "";
     position: absolute;
-    left: 120px;
-    top: -8px;
-    width: 90px;
-    height: 2px;
+    left: 100%;
+    top: -0.5rem;
+    width: 5vw;
+    height: 0.15rem;
     background: #c9cfe6;
     transform: rotate(12deg);
     transform-origin: left center;
 }
 
 .region.cuyo .punto {
-    top: 29px;
-    left: 405px;
+    top: 2rem;
+    left: 90%;
 }
 
 .region.patagonia {
-    top: 320px;
-    left: -270px;
+    top: 28%;
+    left: -24%;
 }
 
 .region.patagonia .linea {
-    top: 40px;
-    left: 190px;
-    width: 140px;
-    height: 2px;
+    top: 2.5rem;
+    left: 70%;
+    width: 18vw;
+    height: 0.15rem;
     background: #1f2a44;
 }
 
 .region.patagonia .linea::after {
     content: "";
     position: absolute;
-    left: 140px;
-    top: -12px;
-    width: 70px;
-    height: 2px;
+    left: 100%;
+    top: -0.6rem;
+    width: 4.5vw;
+    height: 0.15rem;
     background: #1f2a44;
     transform: rotate(18deg);
     transform-origin: left center;
 }
 
 .region.patagonia .punto {
-    top: 25px;
-    left: 405px;
+    top: 1.8rem;
+    left: 90%;
 }
 
 .region.nea {
-    top: 10px;
-    right: -270px;
+    top: 2.5%;
+    right: -26%;
 }
 
 .region.nea .linea {
-    top: 46px;
-    right: 190px;
-    width: 150px;
-    height: 2px;
+    top: 2.7rem;
+    right: 70%;
+    width: 18vw;
+    height: 0.15rem;
     background: #1f2a44;
 }
 
 .region.nea .linea::after {
     content: "";
     position: absolute;
-    right: 150px;
-    top: -10px;
-    width: 60px;
-    height: 2px;
+    right: 100%;
+    top: -0.6rem;
+    width: 6vw;
+    height: 0.15rem;
     background: #1f2a44;
     transform: rotate(-15deg);
     transform-origin: right center;
 }
 
 .region.nea .punto {
-    top: 33px;
-    right: 405px;
+    top: 2.2rem;
+    right: 88%;
 }
 
 .region.amba {
-    top: 170px;
-    right: -270px;
+    top: 14%;
+    right: -24%;
 }
 
 .region.amba .linea {
-    top: 40px;
-    right: 190px;
-    width: 210px;
-    height: 2px;
+    top: 2.5rem;
+    right: 66%;
+    width: 22vw;
+    height: 0.15rem;
     background: #1f2a44;
 }
 
 .region.amba .punto {
-    top: 37px;
-    right: 405px;
+    top: 2.4rem;
+    right: 90%;
 }
 
 .region.amba .punto::after {
@@ -1097,33 +1102,33 @@ background: #e6b85f;
 }
 
 .region.centro {
-    top: 320px;
-    right: -270px;
+    top: 28%;
+    right: -24%;
 }
 
 .region.centro .linea {
-    top: 40px;
-    right: 190px;
-    width: 130px;
-    height: 2px;
+    top: 2.5rem;
+    right: 70%;
+    width: 18vw;
+    height: 0.15rem;
     background: #1f2a44;
 }
 
 .region.centro .linea::after {
     content: "";
     position: absolute;
-    right: 130px;
-    top: -20px;
-    width: 80px;
-    height: 2px;
+    right: 100%;
+    top: -0.8rem;
+    width: 5vw;
+    height: 0.15rem;
     background: #1f2a44;
     transform: rotate(-20deg);
     transform-origin: right center;
 }
 
 .region.centro .punto {
-    top: 17px;
-    right: 400px;
+    top: 1.1rem;
+    right: 88%;
 }
 
 .grupo-filtro select {
@@ -1301,9 +1306,10 @@ background: #e6b85f;
 
 .principal-infracciones-contenedor {
     display: grid;
-    grid-template-columns: 60% 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 40px;
     align-items: flex-start;
+    width: 100%;
 }
 
 /* COLUMNA IZQUIERDA - BARRAS */
@@ -1332,8 +1338,11 @@ background: #e6b85f;
 }
 
 .principal-infracciones-icono img {
-    width: 50px;
+    width: calc(var(--factor-escala) * 50px);
     height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    aspect-ratio: 1 / 1;
 }
 
 .principal-infracciones-info {
@@ -1464,6 +1473,24 @@ background: #e6b85f;
 
 .principal-infracciones-nota p {
     margin: 0;
+}
+
+@media (max-width: 1440px) {
+    :root {
+        --factor-escala: 0.95;
+    }
+}
+
+@media (max-width: 1024px) {
+    :root {
+        --factor-escala: 0.9;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --factor-escala: 0.8;
+    }
 }
 
 /* RESPONSIVE */
