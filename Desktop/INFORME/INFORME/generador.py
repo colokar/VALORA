@@ -1,23 +1,34 @@
-from flask import Flask, jsonify, send_from_directory
+import os
+import glob
+import re
+import unicodedata
+import pandas as pd
+import json
+import sys
+from datetime import datetime
+from flask import Flask, jsonify, request, send_from_directory
+
+# =========================================================
+# CONFIGURACIÓN DE RUTAS Y FLASK
+# =========================================================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(__name__, static_folder=BASE_DIR, static_url_path="")
 
 try:
     from flask_cors import CORS
-except ImportError as exc:
-    raise ImportError(
-        "flask-cors no está instalado. Activa el entorno virtual .venv y ejecuta: .\\.venv\\Scripts\\Activate.ps1 && pip install flask-cors"
-    ) from exc
+    CORS(app, resources={r"/*": {"origins": "*"}})
+except ImportError:
+    print(" Flask-CORS no instalado. Ejecuta: pip install flask-cors")
 
-import pandas as pd
-import glob
-import os
-import re
-import unicodedata
+# =========================================================
+# FUNCIONES AUXILIARES (Títulos y Normalización)
+# =========================================================
+def titulo(texto):
+    print(f"\n{'='*60}\n{texto.center(60)}\n{'='*60}")
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-app = Flask(__name__, static_folder=BASE_DIR, static_url_path="")
-CORS(app, resources={r"/*": {"origins": "*"}})
+def subtitulo(texto):
+    print(f"\n--- {texto} ---")
 
-# 1. Mapas de configuración
 mapa_regiones = {
     "AMBA": ["RETIRO", "CAPITAL FEDERAL", "LA PLATA", "EZEIZA", "MATANZA", "BUENOS AIRES", "LANUS", "QUILMES", "AVELLANEDA", "MORON", "LOMAS"],
     "COSTA": ["MAR DEL PLATA", "BAHIA BLANCA", "NECOCHEA"],
@@ -30,131 +41,198 @@ mapa_regiones = {
 
 REGIONES_ORDENADAS = ["AMBA", "CEN", "CUY", "NEA", "NOA", "COSTA", "PAT"]
 
-
 def normalizar(texto):
-    if pd.isna(texto):
-        return ""
+    if pd.isna(texto): return ""
     texto = str(texto).lower()
     texto = ''.join(c for c in unicodedata.normalize('NFD', texto) if unicodedata.category(c) != 'Mn')
     texto = texto.replace("ñ", "n")
     texto = re.sub(r"[^a-z0-9 ]", " ", texto)
     return re.sub(r"\s+", " ", texto).strip()
 
-
 def normalizar_region(valor):
-    if valor is None:
-        return "SIN_REGION"
-
-    texto = str(valor).strip()
-    texto = texto.replace("–", "-")
-    texto = texto.replace("—", "-")
-    texto = texto.replace("_", " ")
-    texto = re.sub(r"\s*-\s*", " - ", texto)
-    texto = re.sub(r"\s+", " ", texto).strip()
-
-    if not texto:
-        return "SIN_REGION"
-
-    texto_norm = normalizar(texto)
-    if not texto_norm:
-        return "SIN_REGION"
-
+    if not valor or pd.isna(valor): return "SIN_REGION"
+    texto_norm = normalizar(valor)
     for region, nombres in mapa_regiones.items():
         for nombre in nombres:
             if normalizar(nombre) in texto_norm:
                 return region
-
     return "SIN_REGION"
 
+def convertir_dms_a_decimal(coordenada):
+    if not coordenada or pd.isna(coordenada): return None
+    try:
+        coord_str = str(coordenada).strip()
+        patron = r"(\d+)[º°](\d+)['\'](\d+(?:\.\d+)?)[\"″]([NSEW])"
+        match = re.search(patron, coord_str)
+        if not match: return None
+        decimal = float(match.group(1)) + (float(match.group(2)) / 60) + (float(match.group(3)) / 3600)
+        if match.group(4).upper() in ['S', 'W']: decimal = -decimal
+        return round(decimal, 6)
+    except: return None
 
+def detectar_incidencia(fila):
+    for col in ["ALCOHOLEMIA CHOFER 1", "ALCOHOLEMIA CHOFER 2", "ALCOHOLEMIA CHOFER 3"]:
+        if col in fila and any(x in str(fila[col]).upper() for x in ["POS", "POSITIVO", "+"]):
+            return "ALCOHOLEMIA", col
+    for col in ["SUSTANCIAS CHOFER 1", "SUSTANCIAS CHOFER 2", "SUSTANCIAS CHOFER 3"]:
+        if col in fila and any(x in str(fila[col]).upper() for x in ["POS", "POSITIVO", "+"]):
+            return "SUSTANCIA", col
+    return None, None
+
+def elegir_articulo(transporte, items):
+    t = str(transporte).lower()
+    infr = str(items)
+    if "carg" in t: return "108" if "108" in infr else ("110" if "110" in infr else "")
+    if "pasaj" in t: return "110" if "110" in infr else ("108" if "108" in infr else "")
+    return "108" if "108" in infr else ("110" if "110" in infr else "")
+
+# =========================================================
+# RUTAS DE FLASK
+# =========================================================
 @app.route('/')
 def index():
     return send_from_directory(BASE_DIR, 'index.html')
 
-
 @app.route('/resumen')
 def get_resumen():
     try:
-        ruta_carpeta = os.path.join(BASE_DIR, 'Excel')
-        archivos = [f for f in glob.glob(os.path.join(ruta_carpeta, '*.xls*')) if '~$' not in f]
+        with open(os.path.join(BASE_DIR, "datos.json"), "r", encoding="utf-8") as f:
+            return jsonify(json.load(f))
+    except:
+        return jsonify({"error": "No se pudo leer datos.json. ¿Ejecutaste el script completo?"}), 500
 
-        if not archivos:
-            return jsonify({'error': 'No se encontraron archivos en la carpeta /Excel'}), 404
+@app.route('/timeline')
+def get_timeline():
+    desde = request.args.get('desde')
+    hasta = request.args.get('hasta')
 
-        resumen_regiones = {
-            region: {
-                'cargas': {'vc': 0, 'actas': 0, 'ret': 0},
-                'pasajeros': {'vc': 0, 'actas': 0, 'ret': 0},
-                'total': {'vc': 0, 'actas': 0, 'ret': 0}
-            }
-            for region in REGIONES_ORDENADAS
-        }
+    if not desde or not hasta:
+        return jsonify({"error": "Parámetros 'desde' y 'hasta' son obligatorios."}), 400
 
-        total_vc = 0
-        total_cargas = 0
-        total_pasajeros = 0
-        total_retenciones = 0
+    try:
+        fecha_desde = datetime.strptime(desde, "%Y-%m-%d").date()
+        fecha_hasta = datetime.strptime(hasta, "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"error": "Formato de fecha inválido. Use YYYY-MM-DD."}), 400
 
-        for archivo in archivos:
-            df = pd.read_excel(archivo)
-            df.columns = df.columns.astype(str).str.strip()
+    if fecha_desde > fecha_hasta:
+        return jsonify({"error": "El rango de fechas es inválido: desde no puede ser mayor que hasta."}), 400
 
+    try:
+        with open(os.path.join(BASE_DIR, "datos.json"), "r", encoding="utf-8") as f:
+            datos = json.load(f)
+    except:
+        return jsonify({"error": "No se pudo leer datos.json para generar el timeline."}), 500
+
+    registros = datos.get("registros", [])
+    resumen = {}
+
+    for registro in registros:
+        try:
+            fecha_registro = datetime.strptime(str(registro.get("fecha", ""))[:10], "%Y-%m-%d").date()
+        except ValueError:
+            continue
+
+        if fecha_registro < fecha_desde or fecha_registro > fecha_hasta:
+            continue
+
+        region = registro.get("regional") or "SIN_REGION"
+        key = (fecha_registro.isoformat(), region)
+        if key not in resumen:
+            resumen[key] = {"fecha": key[0], "region": region, "vc": 0, "actas": 0, "retenciones": 0}
+
+        resumen[key]["vc"] += 1
+        if registro.get("articulo"):
+            resumen[key]["actas"] += 1
+        if registro.get("retiene") == "SI":
+            resumen[key]["retenciones"] += 1
+
+    timeline = sorted(resumen.values(), key=lambda item: (item["fecha"], item["region"]))
+    return jsonify({"timeline": timeline}), 200
+
+# =========================================================
+# LÓGICA DE PROCESAMIENTO (Se ejecuta al iniciar)
+# =========================================================
+if __name__ == "__main__":
+    titulo("INICIO DE PROCESAMIENTO CNRT")
+    
+    carpeta_excels = os.path.join(BASE_DIR, "Excel")
+    archivos_excel = [f for f in glob.glob(os.path.join(carpeta_excels, "*.xls*")) if "~$" not in os.path.basename(f)]
+
+    if not archivos_excel:
+        print(f"✗ No se encontraron archivos Excel en {carpeta_excels}")
+    else:
+        print(f" Archivos detectados: {len(archivos_excel)}")
+        
+        dfs = []
+        for archivo in archivos_excel:
+            try:
+                engine = "xlrd" if archivo.lower().endswith(".xls") else "openpyxl"
+                df_temp = pd.read_excel(archivo, engine=engine)
+                dfs.append(df_temp)
+                print(f"   ✓ Leído: {os.path.basename(archivo)}")
+            except Exception as e:
+                print(f"   ✗ Error en {os.path.basename(archivo)}: {e}")
+
+        if dfs:
+            df = pd.concat(dfs, ignore_index=True)
+            df.columns = df.columns.str.strip().str.upper()
+            
+            # Normalización
+            df["REGION_NORMALIZADA"] = df["REGIONAL"].apply(normalizar_region)
+            
+            registros = []
+            total_retenciones = 0
+            
             for _, fila in df.iterrows():
-                tipo = str(fila.get('TRANSPORTE', '')).strip().upper()
-                if tipo not in ('CA', 'PA'):
-                    continue
+                transporte = str(fila.get("TRANSPORTE", "")).strip().upper()
+                if transporte not in ('CA', 'PA'): continue
+                
+                retiene = str(fila.get("RETIENE", "")).upper().strip()
+                es_ret = retiene in ["SI", "SÍ"]
+                if es_ret: total_retenciones += 1
+                
+                tipo_inc, fuente = detectar_incidencia(fila)
+                
+                dominios = [str(fila.get(d, "")).strip().upper() for d in ["DOMINIO", "DOMINIO2", "DOMINIO3"]]
+                dominios = [d for d in dominios if d and d != "NAN"]
 
-                cat = 'cargas' if tipo == 'CA' else 'pasajeros'
-                reg_norm = normalizar_region(fila.get('REGIONAL', ''))
+                registros.append({
+                    "fecha": str(fila.get("FECHA", ""))[:10],
+                    "regional": fila.get("REGION_NORMALIZADA"),
+                    "transporte": transporte,
+                    "retiene": "SI" if es_ret else "NO",
+                    "articulo": elegir_articulo(transporte, fila.get("ITEMS INFRACCION", "")),
+                    "incidencia": tipo_inc,
+                    "dominios": dominios
+                })
 
-                if reg_norm not in resumen_regiones:
-                    continue
+            # Cálculo por Regiones para Dashboard
+            reg_stats = {r: {"total": {"vc":0, "actas":0, "ret":0}, "cargas":{"vc":0,"actas":0,"ret":0}, "pasajeros":{"vc":0,"actas":0,"ret":0}} for r in REGIONES_ORDENADAS}
+            
+            for r in registros:
+                reg = r["regional"]
+                if reg in reg_stats:
+                    cat = "cargas" if r["transporte"] == "CA" else "pasajeros"
+                    for k in [cat, "total"]:
+                        reg_stats[reg][k]["vc"] += 1
+                        if r["articulo"]: reg_stats[reg][k]["actas"] += 1
+                        if r["retiene"] == "SI": reg_stats[reg][k]["ret"] += 1
 
-                val_retiene = str(fila.get('RETIENE', '')).strip().upper()
-                es_ret = val_retiene in ('SI', 'SÍ')
+            # Guardar JSON
+            salida = {
+                "metadata": {"total_registros": len(registros), "total_retenciones": total_retenciones},
+                "regiones": reg_stats,
+                "registros": registros
+            }
+            
+            with open(os.path.join(BASE_DIR, "datos.json"), "w", encoding="utf-8") as f:
+                json.dump(salida, f, indent=2, ensure_ascii=False)
+            
+            print(f"\n Proceso completado. {len(registros)} registros guardados en datos.json")
 
-                val_items = fila.get('ITEMS INFRACCION', '')
-                tiene_acta = False
-                if pd.notna(val_items):
-                    item_text = str(val_items).strip()
-                    tiene_acta = bool(item_text) and item_text.upper() not in ('NAN', 'NONE', '0')
-
-                total_vc += 1
-                if tipo == 'CA':
-                    total_cargas += 1
-                else:
-                    total_pasajeros += 1
-                if es_ret:
-                    total_retenciones += 1
-
-                resumen_regiones[reg_norm][cat]['vc'] += 1
-                if tiene_acta:
-                    resumen_regiones[reg_norm][cat]['actas'] += 1
-                if es_ret:
-                    resumen_regiones[reg_norm][cat]['ret'] += 1
-
-                resumen_regiones[reg_norm]['total']['vc'] += 1
-                if tiene_acta:
-                    resumen_regiones[reg_norm]['total']['actas'] += 1
-                if es_ret:
-                    resumen_regiones[reg_norm]['total']['ret'] += 1
-
-        salida = {
-            'resumen_general': {
-                'total_vc': total_vc,
-                'cargas_vc': total_cargas,
-                'pasajeros_vc': total_pasajeros,
-                'retenciones': total_retenciones
-            },
-            'resumen_por_region': resumen_regiones
-        }
-        return jsonify(salida)
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-if __name__ == '__main__':
+    # Iniciar Servidor
+    subtitulo("INICIANDO SERVIDOR WEB")
     app.run(debug=True, port=5000)
 
 
@@ -310,7 +388,7 @@ if not archivos_excel:
     exit()
 
 titulo("DETECCIÓN DE ARCHIVOS FUENTE")
-print(f"📁 Archivos detectados: {len(archivos_excel)}\n")
+print(f" Archivos detectados: {len(archivos_excel)}\n")
 for idx, archivo in enumerate(archivos_excel, 1):
     print(f"   [{idx}] {os.path.basename(archivo)}")
 print()
@@ -342,18 +420,18 @@ if len(sys.argv) > 2:
 modo = "A"  # Cambiar a "B" para el modo expansión
 
 subtitulo("CONFIGURACIÓN INICIAL")
-print(f"⚙️  MODO DE PROCESAMIENTO: {modo}")
+print(f"  MODO DE PROCESAMIENTO: {modo}")
 print(f"    [A] = 1 registro por fila (dominios en lista)")
 print(f"    [B] = 1 registro por dominio (expansión)\n")
 
 if fecha_desde or fecha_hasta:
-    print("📅 FILTRO DE FECHAS:")
+    print(" FILTRO DE FECHAS:")
     if fecha_desde:
         print(f"    Desde: {fecha_desde}")
     if fecha_hasta:
         print(f"    Hasta: {fecha_hasta}")
 else:
-    print("📅 FILTRO DE FECHAS: ✗ SIN FILTRO (se procesarán TODOS los datos)")
+    print(" FILTRO DE FECHAS: ✗ SIN FILTRO (se procesarán TODOS los datos)")
 print()
 
 
@@ -396,8 +474,8 @@ if not dfs:
     exit()
 
 df = pd.concat(dfs, ignore_index=True)
-print(f"\n   📊 TOTAL ACUMULADO: {total_filas:,} filas")
-print(f"   📊 TOTAL CONSOLIDADO: {df.shape[0]:,} filas\n")
+print(f"\n    TOTAL ACUMULADO: {total_filas:,} filas")
+print(f"    TOTAL CONSOLIDADO: {df.shape[0]:,} filas\n")
 
 
 # =========================================================
@@ -430,7 +508,7 @@ df["REGION_NORMALIZADA"] = df["REGIONAL"].apply(normalizar_region)
 df["REGION_NORMALIZADA"] = df["REGION_NORMALIZADA"].str.strip().str.upper()
 
 sin_region_count = int((df["REGION_NORMALIZADA"] == "SIN_REGION").sum())
-print(f"🔎 Registros sin región mapeada: {sin_region_count:,}")
+print(f" Registros sin región mapeada: {sin_region_count:,}")
 if sin_region_count > 0:
     print("    Ejemplos de regionales no mapeadas:")
     for reg in sorted(set(df.loc[df["REGION_NORMALIZADA"] == "SIN_REGION", "REGIONAL"]))[:20]:
@@ -441,7 +519,7 @@ df_valid = df[df["REGION_NORMALIZADA"] != "SIN_REGION"]
 total_valid = len(df_valid)
 total_groupby = df_valid.groupby("REGION_NORMALIZADA").size().sum()
 
-print(f"✅ Validación de agrupamiento:")
+print(f" Validación de agrupamiento:")
 print(f"    Registros válidos: {total_valid:,}")
 print(f"    Suma del groupby: {total_groupby:,}")
 
@@ -476,7 +554,7 @@ for val in sorted(df["REGION_NORMALIZADA"].unique()):
     print(f"  {val}: {count}")
 
 subtitulo("ESTRUCTURA DE DATOS")
-print(f"📋 COLUMNAS DISPONIBLES ({len(df.columns)}):\n")
+print(f" COLUMNAS DISPONIBLES ({len(df.columns)}):\n")
 for col in df.columns:
     print(f"    • {col}")
 print()
@@ -507,7 +585,7 @@ if fecha_desde or fecha_hasta:
         print(f"🔍 Filtro de fechas aplicado: {df_original_rows:,} → {df.shape[0]:,} registros\n")
 
     except Exception as e:
-        print(f"⚠️  Error al aplicar filtro de fechas: {e}\n")
+        print(f"  Error al aplicar filtro de fechas: {e}\n")
 
 print(f"✓ DF listo para procesamiento: {df.shape[0]:,} filas\n")
 
@@ -792,28 +870,28 @@ with open(datos_json_path, "w", encoding="utf-8") as f:
 
 titulo("RESUMEN GENERAL DE PROCESAMIENTO")
 
-print(f"⚙️  MODO DE PROCESAMIENTO: {modo}\n")
-print(f"📊 DATOS PROCESADOS:")
+print(f"  MODO DE PROCESAMIENTO: {modo}\n")
+print(f" DATOS PROCESADOS:")
 print(f"    • Filas Excel: {df.shape[0]:,}")
 print(f"    • Registros generados: {len(registros):,}")
 print(f"    • Dominios válidos totales: {total_dominios:,}\n")
 
-print(f"🚗 VEHÍCULOS CONTROLADOS:")
+print(f" VEHÍCULOS CONTROLADOS:")
 print(f"    • Total VC: {total_vehiculos:,}")
 print(f"    • Cargas: {total_cargas:,} ({porc_cargas}%)")
 print(f"    • Pasajeros: {total_pasajeros:,} ({porc_pasajeros}%)\n")
 
-print(f"📝 ACTAS:")
+print(f" ACTAS:")
 print(f"    • Total actas: {salida['actas']['total']}")
 print(f"    • Cargas: {salida['actas']['cargas']}")
 print(f"    • Pasajeros: {salida['actas']['pasajeros']}\n")
 
-print(f"🛑 RETENCIONES:")
+print(f" RETENCIONES:")
 print(f"    • Total retenciones: {total_retenciones}")
 print(f"    • Cargas: {salida['retenciones']['cargas']}")
 print(f"    • Pasajeros: {salida['retenciones']['pasajeros']}\n")
 
-print(f"⚠️  INCIDENCIAS CRÍTICAS:")
+print(f"  INCIDENCIAS CRÍTICAS:")
 print(f"    • Alcoholemia positiva: {incidencias_alcoholemia}")
 print(f"    • Sustancias positivas: {incidencias_sustancias}")
 print(f"    • Registros con incidencia: {len(detalles_incidencias)}\n")
@@ -827,7 +905,7 @@ subtitulo("DEBUG PROCESAMIENTO")
 regionales_en_registros = sorted(set(r.get('regional', '') for r in registros if r.get('regional')))
 transportes_en_registros = sorted(set(r.get('transporte', '') for r in registros if r.get('transporte')))
 
-print(f"📍 Regionales presentes:")
+print(f" Regionales presentes:")
 if regionales_en_registros:
     for reg in regionales_en_registros:
         count = sum(1 for r in registros if r.get('regional') == reg)
@@ -856,7 +934,7 @@ for region in sorted(regiones_detectadas):
     total_actas = r["total"]["actas"]
     total_ret = r["total"]["ret"]
     
-    print(f"📍 {region.upper()}")
+    print(f" {region.upper()}")
     print(f"    Total    → VC: {total_vc:,} | Actas: {total_actas:,} | Ret: {total_ret:,}")
     print(f"    Cargas   → VC: {r['cargas']['vc']:,} | Actas: {r['cargas']['actas']:,} | Ret: {r['cargas']['ret']:,}")
     print(f"    Pasajeros→ VC: {r['pasajeros']['vc']:,} | Actas: {r['pasajeros']['actas']:,} | Ret: {r['pasajeros']['ret']:,}\n")
@@ -875,9 +953,9 @@ print(f"    • Total registros con regional válida: {total_registros_validos:,
 print(f"    • Suma VC por regiones: {suma_vc_regiones:,}")
 
 if suma_vc_regiones == total_registros_validos:
-    print(f"    ✅ OK - Los datos son consistentes\n")
+    print(f"     OK - Los datos son consistentes\n")
 else:
-    print(f"    ⚠️  ERROR - Discrepancia detectada ({total_registros_validos:,} vs {suma_vc_regiones:,})\n")
+    print(f"      ERROR - Discrepancia detectada ({total_registros_validos:,} vs {suma_vc_regiones:,})\n")
 
 # =========================================================
 # BLOQUE E: REGIONES NO MAPEADAS
@@ -885,10 +963,10 @@ else:
 
 if regiones_no_mapeadas:
     subtitulo("REGIONES NO MAPEADAS (POSIBLES VALORES INVÁLIDOS)")
-    print("⚠️  Las siguientes regiones fueron encontradas pero no están en el mapa de normalización:\n")
+    print("  Las siguientes regiones fueron encontradas pero no están en el mapa de normalización:\n")
     for reg in sorted(regiones_no_mapeadas):
         count = len([r for r in registros if r.get('regional') == reg])
-        print(f"    ⊘ {reg:20} → {count:,} registros ignorados")
+        print(f"     {reg:20} → {count:,} registros ignorados")
     print()
 
 # =========================================================
@@ -897,17 +975,17 @@ if regiones_no_mapeadas:
 
 titulo("RESUMEN FINAL")
 
-print(f"✅ Archivo generado exitosamente\n")
-print(f"📁 Ubicación: {datos_json_path}\n")
+print(f" Archivo generado exitosamente\n")
+print(f" Ubicación: {datos_json_path}\n")
 
 if fecha_desde or fecha_hasta:
-    print(f"🕐 Período de datos:")
+    print(f" Período de datos:")
     if fecha_desde:
         print(f"    Desde: {fecha_desde}")
     if fecha_hasta:
         print(f"    Hasta: {fecha_hasta}\n")
 
-print(f"📊 RESUMEN CONSOLIDADO:")
+print(f" RESUMEN CONSOLIDADO:")
 print(f"    • Vehículos Controlados: {total_vehiculos:,}")
 print(f"      - Cargas: {total_cargas:,} ({porc_cargas}%)")
 print(f"      - Pasajeros: {total_pasajeros:,} ({porc_pasajeros}%)")
@@ -916,4 +994,4 @@ print(f"    • Retenciones: {total_retenciones}")
 print(f"    • Incidencias Alcoholemia: {incidencias_alcoholemia}")
 print(f"    • Incidencias Sustancias: {incidencias_sustancias}")
 print(f"    • Registros Generados: {len(registros):,}\n")
-print(f"🕐 Timestamp: {salida['metadata']['fecha_generacion']}\n")
+print(f" Timestamp: {salida['metadata']['fecha_generacion']}\n")

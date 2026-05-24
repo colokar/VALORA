@@ -3,6 +3,7 @@
 // =========================================================
 // Este script consume datos en tiempo real desde /resumen.
 // No usa archivos estáticos como datos.json.
+// El JSON actualizado por Python usa metadata y regiones.
 // =========================================================
 
 async function actualizarTablaRegiones() {
@@ -13,8 +14,8 @@ async function actualizarTablaRegiones() {
         }
 
         const datos = await response.json();
-        const resumenGeneral = datos.resumen_general || {};
-        const resumenPorRegion = datos.resumen_por_region || {};
+        const resumenGeneral = datos.metadata || {};
+        const resumenPorRegion = datos.regiones || {};
 
         actualizarResumenGeneral(resumenGeneral, resumenPorRegion);
         actualizarTablaResumenRegion(resumenPorRegion);
@@ -27,10 +28,10 @@ async function actualizarTablaRegiones() {
 }
 
 function actualizarResumenGeneral(resumenGeneral, resumenPorRegion) {
-    const totalVC = Number(resumenGeneral.total_vc || 0);
-    const totalCargas = Number(resumenGeneral.cargas_vc || 0);
-    const totalPasajeros = Number(resumenGeneral.pasajeros_vc || 0);
-    const totalRetenciones = Number(resumenGeneral.retenciones || 0);
+    const totalVC = Object.values(resumenPorRegion).reduce((sum, region) => sum + Number(region.total.vc || 0), 0);
+    const totalCargas = Object.values(resumenPorRegion).reduce((sum, region) => sum + Number(region.cargas.vc || 0), 0);
+    const totalPasajeros = Object.values(resumenPorRegion).reduce((sum, region) => sum + Number(region.pasajeros.vc || 0), 0);
+    const totalRetenciones = Number(resumenGeneral.total_retenciones || 0);
     const totalActas = calcularTotalActas(resumenPorRegion);
 
     const pctCargas = totalVC > 0 ? Math.round((totalCargas / totalVC) * 100) : 0;

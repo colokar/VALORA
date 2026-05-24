@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>imagen</title>
     <meta name="author" content="Darío David Molina">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -19,23 +18,25 @@
             <img src="IMAGENES/logo CNRT blanco.png" alt="CNRT" class="logo-cnrt">
         </div>
         <h1>Resumen Operativo</h1>
-        
         <p>Análisis de Resultado</p>
 
         <!-- === Boton de fechas y botón Generar Informe === -->
         <div class="container-filtro">
             <div class="campo">
-                <label for="desde">Desde:</label>
-                <input type="date" id="desde">
+                <label for="fecha_desde">Desde:</label>
+                <input type="date" id="fecha_desde">
             </div>
 
             <div class="campo">
-                <label for="hasta">Hasta:</label>
-                <input type="date" id="hasta">
+                <label for="fecha_hasta">Hasta:</label>
+                <input type="date" id="fecha_hasta">
             </div>
 
-            <button class="btn-informe" onclick="generarInforme()">
-                Generar Informe
+            <button 
+            id="btn-generar"
+            class="btn-informe">
+                
+            Generar Informe
             </button>
 
              <button class="btn-informe" onclick="descargarPDF()">
@@ -44,7 +45,9 @@
         </div>
 
         <!-- SECCION DE VEHICULOS CONTROLADOS === -->
-<div class="control-item">
+<div class="vc-grupo-unificado">
+
+    <!-- SECCION DE VEHICULOS CONTROLADOS -->
     <div class="vc-bloque">
         <div class="vc-contenedor">
             <div class="vc-header">
@@ -56,7 +59,6 @@
             </div>
 
             <div class="vc-main">
-
                 <div class="vc-izquierda">
                     <div class="vc-barra-container">
                         <div class="vc-barra-header">
@@ -87,113 +89,117 @@
                 </div>
 
                 <div class="vc-derecha">
-                    <div class="vc-grafico-contenedor">
-                        <canvas id="grafico-vc"></canvas>
-                        <div class="vc-centro">
-                            <img src="IMAGENES/VC_azul.png" class="vc-icono-centro" alt="PDA">
-                            <div id="vc_total" class="vc-total">0</div>
-                            <div class="vc-sub">Total VC 100%</div>
-                            
-                        </div>
-                        <div class="vc-indicadores">
-                            <div class="vc-indicador retenciones">
-                                <div class="vc-texto">
-                                    <div class="vc-valor-ind">➤ Retenciones <span id="vc_ret_valor">0</span></div>
-                                    <div class="vc-subrayado"></div>
-                                    <span class="vc-porc-ind" id="vc_ret_porc">0%</span>
-                                </div>
-                                <img src="IMAGENES/stop_azul.png" alt="Retencion">
-                            </div>
-                            <div class="vc-indicador actas">
-                                <div class="vc-texto">
-                                    <div class="vc-valor-ind">➤ Actas <span id="vc_actas_valor">0</span></div>
-                                    <div class="vc-subrayado"></div>
-                                    <span class="vc-porc-ind" id="vc_actas_porc">0%</span>
-                                </div>
-                                <img src="IMAGENES/Anotador.png" alt="Actas">
-                            </div>
-                        </div>
-                    </div>
+    <div class="vc-grafico-contenedor">
+        <!-- Círculo central -->
+        <div class="vc-centro">
+            <div id="vc_total" class="vc-total">0</div>
+            <div class="vc-sub">Total VC 100%</div>
+        </div>
+        
+        <!-- Contenedor de indicadores que ahora respeta márgenes -->
+        <div class="vc-indicadores-wrapper">
+            <!-- Indicador Actas -->
+            <div class="vc-indicador actas">
+                <div class="vc-texto">
+                    <div class="vc-valor-ind">➤ Actas <span id="vc_actas_valor">0</span></div>
+                    <div class="vc-subrayado"></div>
+                    <span class="vc-porc-ind" id="vc_actas_porc">0%</span>
                 </div>
-
+                <img src="IMAGENES/Anotador.png" alt="Actas">
             </div>
 
+            <!-- Indicador Retenciones -->
+            <div class="vc-indicador retenciones">
+                <div class="vc-texto">
+                    <div class="vc-valor-ind">➤ Retenciones <span id="vc_ret_valor">0</span></div>
+                    <div class="vc-subrayado"></div>
+                    <span class="vc-porc-ind" id="vc_ret_porc">0%</span>
+                </div>
+                <img src="IMAGENES/stop_azul.png" alt="Retenciones">
+            </div>
         </div>
     </div>
-
 </div>
-
-        <!-- ===ACTAS=== -->
-        <div class="vc-bloque">
-
-            <div class="vc-header">
-                <div class="vc-titulo">
-                    <span class="vc-flecha-titulo">&gt;</span>
-                    Actas
-                </div>
-                <div class="vc-linea"></div>
             </div>
+        </div>
+    </div> <!-- FIN VEHICULOS CONTROLADOS -->
 
-            <div class="vc-main">                
+    <!-- SEPARADOR VISUAL -->
+    <div class="vc-separador-interno"></div>
 
-                <div class="vc-izquierda">
-                    <div class="vc-barra-container">
-                        <div class="vc-barra-header">
-                            <div class="vc-header-item">
-                                <img src="IMAGENES/camion_azul.png" alt="Camión" class="vc-icono">
-                                <span>Cargas</span>
-                            </div>
-                            <div class="vc-header-item">
-                                <img src="IMAGENES/micro_azul.png" alt="Micro" class="vc-icono">
-                                <span>Pasajeros</span>
-                            </div>
-                        </div>
-                        <div class="vc-barra-horizontal">
-                            <div class="vc-barra-cargas" id="actas_cargas_pct">0%</div>
-                            <div class="vc-barra-pasajeros" id="actas_pasajeros_pct">0%</div>
-                        </div>
-                        <div class="vc-unidades-container">
-                            <div class="vc-unidades">
-                                <span class="vc-flecha">➤</span>
-                                <span id="actas_cargas_un">0</span> un.
-                            </div>
-                            <div class="vc-unidades">
-                                <span class="vc-flecha">➤</span>
-                                <span id="actas_pasajeros_un">0</span> un.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="vc-derecha">
-                    <div class="vc-grafico-contenedor">
-                        <canvas id="grafico-actas"></canvas>
-                        <div class="vc-indicadores">
-                            <div class="vc-indicador retenciones">
-                                <div class="vc-texto">
-                                    <div class="vc-valor-ind">➤ Retenciones <span id="actas_ret_valor">0</span></div>
-                                    <div class="vc-subrayado"></div>
-                                    <span class="vc-porc-ind" id="actas_ret_porc">0%</span>
-                                </div>
-                                <img src="IMAGENES/stop_azul.png" alt="Retencion">
-                            </div>
-                        </div>
-                        <div class="vc-centro">
-                            <img src="IMAGENES/Anotador.png" class="vc-icono-centro" alt="PDA">
-                            <div id="actas_total" class="vc-total">0</div>
-                            <div class="vc-sub">Total Actas 100%</div>
-                        </div>
-                        
-                    </div>
-                </div>
-
+    <!-- SECCION DE ACTAS -->
+    <div class="vc-bloque">
+        <div class="vc-header">
+            <div class="vc-titulo">
+                <span class="vc-flecha-titulo">&gt;</span>
+                Actas
             </div>
-
+            <div class="vc-linea"></div>
         </div>
 
-        <!-- === Sección - Retenciones === -->
-        <div class="vc-bloque">
+        <div class="vc-main">                
+            <div class="vc-izquierda">
+                <div class="vc-barra-container">
+                    <div class="vc-barra-header">
+                        <div class="vc-header-item">
+                            <img src="IMAGENES/camion_azul.png" alt="Camión" class="vc-icono">
+                            <span>Cargas</span>
+                        </div>
+                        <div class="vc-header-item">
+                            <img src="IMAGENES/micro_azul.png" alt="Micro" class="vc-icono">
+                            <span>Pasajeros</span>
+                        </div>
+                    </div>
+                    <div class="vc-barra-horizontal">
+                        <div class="vc-barra-cargas" id="actas_cargas_pct">0%</div>
+                        <div class="vc-barra-pasajeros" id="actas_pasajeros_pct">0%</div>
+                    </div>
+                    <div class="vc-unidades-container">
+                        <div class="vc-unidades">
+                            <span class="vc-flecha">➤</span>
+                            <span id="actas_cargas_un">0</span> un.
+                        </div>
+                        <div class="vc-unidades">
+                            <span class="vc-flecha">➤</span>
+                            <span id="actas_pasajeros_un">0</span> un.
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <div class="vc-derecha">
+                <div class="vc-grafico-contenedor">
+                    <canvas id="grafico-actas"></canvas>
+                    <div class="vc-indicadores">
+                        <div class="vc-indicador retenciones">
+                            <div class="vc-texto">
+                                <div class="vc-valor-ind">➤ Retenciones <span id="actas_ret_valor">0</span></div>
+                                <div class="vc-subrayado"></div>
+                                <span class="vc-porc-ind" id="actas_ret_porc">0%</span>
+                            </div>
+                            <img src="IMAGENES/stop_azul.png" alt="Retencion">
+                        </div>
+                    </div>
+                    <div class="vc-centro">
+                        <img src="IMAGENES/Anotador.png" class="vc-icono-centro" alt="PDA">
+                        <div id="actas_total" class="vc-total">0</div>
+                        <div class="vc-sub">Total Actas 100%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- FIN ACTAS -->
+
+</div> <!-- FIN GRUPO UNIFICADO -->
+
+       <!-- =========================================================== -->
+<!-- GRUPO UNIFICADO: RETENCIONES + INFRACCIONES               -->
+<!-- =========================================================== -->
+<div class="vc-grupo-unificado">
+
+    <!-- SECCION DE RETENCIONES -->
+    <div class="vc-bloque">
+        <div class="vc-contenedor">
             <div class="vc-header">
                 <div class="vc-titulo">
                     <span class="vc-flecha-titulo">&gt;</span>
@@ -203,7 +209,6 @@
             </div>
 
             <div class="vc-main">
-
                 <div class="vc-izquierda">
                     <div class="vc-barra-container">
                         <div class="vc-barra-header">
@@ -236,6 +241,11 @@
                 <div class="vc-derecha">
                     <div class="vc-grafico-contenedor">
                         <canvas id="grafico-retenciones"></canvas>
+                        <div class="vc-centro">
+                            <img src="IMAGENES/stop_azul.png" class="vc-icono-centro" alt="Retencion">
+                            <div id="ret_total" class="vc-total">0</div>
+                            <div class="vc-sub">Total Retenciones 100%</div>
+                        </div>
                         <div class="vc-indicadores">
                             <div class="vc-indicador actas">
                                 <div class="vc-texto">
@@ -246,21 +256,18 @@
                                 <img src="IMAGENES/Anotador.png" alt="Actas">
                             </div>
                         </div>
-                        <div class="vc-centro">
-                            <img src="IMAGENES/stop_azul.png" class="vc-icono-centro" alt="PDA">
-                            <div id="ret_total" class="vc-total">0</div>
-                            <div class="vc-sub">Total Retenciones 100%</div>
-                        </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
+    </div> <!-- FIN RETENCIONES -->
 
-        <!-- === Sección - Infracciones === -->
-        <div class="vc-bloque">
+    <!-- SEPARADOR VISUAL INTERNO -->
+    <div class="vc-separador-interno"></div>
 
+    <!-- SECCION DE INFRACCIONES -->
+    <div class="vc-bloque">
+        <div class="vc-contenedor">
             <div class="vc-header">
                 <div class="vc-titulo">
                     <span class="vc-flecha-titulo">&gt;</span>
@@ -270,7 +277,6 @@
             </div>
 
             <div class="vc-main">
-
                 <div class="vc-izquierda">
                     <div class="vc-barra-container">
                         <div class="vc-barra-header">
@@ -304,225 +310,20 @@
                     <div class="vc-grafico-contenedor">
                         <canvas id="grafico-infracciones"></canvas>
                         <div class="vc-centro">
-                            <img src="IMAGENES/iconos-infracciones-azul.png" class="vc-icono-centro" alt="PDA">
+                            <img src="IMAGENES/iconos-infracciones-azul.png" class="vc-icono-centro" alt="Infracciones">
                             <div id="infracciones_total" class="vc-total">0</div>
-                            <div class="vc-sub">Total Infracciones a nivel nacional</div>
+                            <div class="vc-sub">Total Infracciones 100%</div>
                         </div>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- === Sección - Conductores Desafectados 2 cajas) === -->
-        <div class="seccion-titulo">Conductores Desafectados</div>
-
-        <!-- === Contenedor dos cajas - (izquierda: Conductores / derecha: Retenciones) === -->
-        <div class="two-boxes">
-
-            <!-- Caja: Conductores Desafectados (lado izquierdo) -->
-            <div class="control-item">
-                <div class="item-icon">
-                    <img src="IMAGENES/retencion_azul.png" alt="Conductores Desafectados" width="200" height="210">
-                    <div class="item-numero">00</div>
-                </div>
-                <div class="item-detalles">
-                    <div class="detalle">
-                        <div class="detalle-label">GFTAU</div>
-                        <div class="detalle-valor">00</div>
-                        <div class="detalle-porcentaje">00.00%</div>
-                        <div style="margin-top: 10px;">
-                            <span class="organismo gftau">000 (00%)</span>
-                            <span class="organismo gftau">000 (00%)</span>
-                        </div>
-                    </div>
-                    <div class="detalle">
-                        <div class="detalle-label">SFDR</div>
-                        <div class="detalle-valor">00</div>
-                        <div class="detalle-porcentaje">0000%</div>
-                        <div style="margin-top: 10px;">
-                            <span class="organismo sfdr">000 (00%)</span>
-                            <span class="organismo sfdr">000 (00%)</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Caja: Retenciones (lado derecho) - contiene los dos cuadritos internos -->
-            <div class="control-item">
-                <div class="item-icon">
-                </div>
-                <div class="item-detalles">
-
-                    <!-- Alcoholemia y Sustancias -->
-                    <div class="detalle inner-box">
-                        <img src="IMAGENES/alcoholimetro_azul.png"  width="100" height="90">
-                        <div class="detalle-label">Alcoholemia Positiva</div>
-                        <div class="detalle-valor" id="alc_pos">00</div>
-                    </div>
-
-                    <div class="detalle inner-box">
-                        <img src="IMAGENES/Sustancias_azul.png" width="100" height="90">
-                        <div class="detalle-label">Sustancias Positivas</div>
-                        <div class="detalle-valor" id="sus_pos">00</div>
-                    </div>
-                    </div>
+                        <!-- Si en el futuro agregas indicadores para infracciones, irían aquí -->
                     </div>
                 </div>
             </div>
         </div>
+    </div> <!-- FIN INFRACCIONES -->
 
-        <!-- ===TABLA DE REGIONES=== -->
-        <div class="tabla-regiones">
-            <table>
-                <thead>
-                    <tr>
-                        <th colspan="2">REGIÓN</th>
-                        <th colspan="3">CARGAS</th>
-                        <th colspan="3">PASAJEROS</th>
-                        <th colspan="3">TOTAL</th>
-                    </tr>
-                    <tr>
-                        <th>REGIÓN</th>
-                        <th>DESCRIPCIÓN</th>
-                        <th>VC</th>
-                        <th>ACTAS</th>
-                        <th>RET</th>
-                        <th>VC</th>
-                        <th>ACTAS</th>
-                        <th>RET</th>
-                        <th>VC</th>
-                        <th>ACTAS</th>
-                        <th>RET</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="region-label">AMBA</td>
-                        <td class="region-label">TOTAL AMBA</td>
+</div> <!-- FIN GRUPO UNIFICADO -->
 
-                        <td id="amba_cargas_vc">0</td>
-                        <td id="amba_cargas_actas">0</td>
-                        <td id="amba_cargas_ret">0</td>
-
-                        <td id="amba_pasajeros_vc">0</td>
-                        <td id="amba_pasajeros_actas">0</td>
-                        <td id="amba_pasajeros_ret">0</td>
-
-                        <td id="amba_total_vc">0</td>
-                        <td id="amba_total_actas">0</td>
-                        <td id="amba_total_ret">0</td>
-                        </tr>
-
-                        <tr>
-                        <td class="region-label">CEN</td>
-                        <td class="region-label">TOTAL CENTRO</td>
-
-                        <td id="cen_cargas_vc">0</td>
-                        <td id="cen_cargas_actas">0</td>
-                        <td id="cen_cargas_ret">0</td>
-
-                        <td id="cen_pasajeros_vc">0</td>
-                        <td id="cen_pasajeros_actas">0</td>
-                        <td id="cen_pasajeros_ret">0</td>
-
-                        <td id="cen_total_vc">0</td>
-                        <td id="cen_total_actas">0</td>
-                        <td id="cen_total_ret">0</td>
-                        </tr>
-
-                        <tr>
-                        <td class="region-label">CUY</td>
-                        <td class="region-label">TOTAL CUYO</td>
-
-                        <td id="cuy_cargas_vc">0</td>
-                        <td id="cuy_cargas_actas">0</td>
-                        <td id="cuy_cargas_ret">0</td>
-
-                        <td id="cuy_pasajeros_vc">0</td>
-                        <td id="cuy_pasajeros_actas">0</td>
-                        <td id="cuy_pasajeros_ret">0</td>
-
-                        <td id="cuy_total_vc">0</td>
-                        <td id="cuy_total_actas">0</td>
-                        <td id="cuy_total_ret">0</td>
-                        </tr>
-
-                        <tr>
-                        <td class="region-label">NEA</td>
-                        <td class="region-label">TOTAL NEA</td>
-
-                        <td id="nea_cargas_vc">0</td>
-                        <td id="nea_cargas_actas">0</td>
-                        <td id="nea_cargas_ret">0</td>
-
-                        <td id="nea_pasajeros_vc">0</td>
-                        <td id="nea_pasajeros_actas">0</td>
-                        <td id="nea_pasajeros_ret">0</td>
-
-                        <td id="nea_total_vc">0</td>
-                        <td id="nea_total_actas">0</td>
-                        <td id="nea_total_ret">0</td>
-                        </tr>
-
-                        <tr>
-                        <td class="region-label">NOA</td>
-                        <td class="region-label">TOTAL NOA</td>
-
-                        <td id="noa_cargas_vc">0</td>
-                        <td id="noa_cargas_actas">0</td>
-                        <td id="noa_cargas_ret">0</td>
-
-                        <td id="noa_pasajeros_vc">0</td>
-                        <td id="noa_pasajeros_actas">0</td>
-                        <td id="noa_pasajeros_ret">0</td>
-
-                        <td id="noa_total_vc">0</td>
-                        <td id="noa_total_actas">0</td>
-                        <td id="noa_total_ret">0</td>
-                        </tr>
-
-                        <tr>
-                        <td class="region-label">PAT</td>
-                        <td class="region-label">TOTAL PATAGONIA</td>
-
-                        <td id="pat_cargas_vc">0</td>
-                        <td id="pat_cargas_actas">0</td>
-                        <td id="pat_cargas_ret">0</td>
-
-                        <td id="pat_pasajeros_vc">0</td>
-                        <td id="pat_pasajeros_actas">0</td>
-                        <td id="pat_pasajeros_ret">0</td>
-
-                        <td id="pat_total_vc">0</td>
-                        <td id="pat_total_actas">0</td>
-                        <td id="pat_total_ret">0</td>
-                        </tr>
-
-                        <tr class="total-row">
-
-                        <td colspan="2">TOTAL</td>
-
-                        <td id="total_cargas_vc">0</td>
-                        <td id="total_cargas_actas">0</td>
-                        <td id="total_cargas_ret">0</td>
-
-                        <td id="total_pasajeros_vc">0</td>
-                        <td id="total_pasajeros_actas">0</td>
-                        <td id="total_pasajeros_ret">0</td>
-
-                        <td id="total_vc">0</td>
-                        <td id="total_actas">0</td>
-                        <td id="total_ret">0</td>
-
-                        </tr>
-                </tbody>
-            </table>
-        </div>
-
-
-        <!-- PRINCIPALES MOTIVOS DE INFRACCIÓN - DASHBOARD -->
+<!-- PRINCIPALES MOTIVOS DE INFRACCIÓN - DASHBOARD -->
         <div class="principal-infracciones">
             <h2 class="principal-infracciones-titulo">▸ Principales Motivos de Infracción sobre el total de actas</h2>
             
@@ -804,6 +605,215 @@
             </div>
         </div>
 
+        <!-- === Sección - Conductores Desafectados 2 cajas) === -->
+        <div class="seccion-titulo">Conductores Desafectados</div>
+
+        <!-- === Contenedor dos cajas - (izquierda: Conductores / derecha: Retenciones) === -->
+        <div class="two-boxes">
+
+            <!-- Caja: Conductores Desafectados (lado izquierdo) -->
+            <div class="control-item">
+                <div class="item-icon">
+                    <img src="IMAGENES/retencion_azul.png" alt="Conductores Desafectados" width="200" height="210">
+                    <div class="item-numero">00</div>
+                </div>
+                <div class="item-detalles">
+                    <div class="detalle">
+                        <div class="detalle-label">GFTAU</div>
+                        <div class="detalle-valor">00</div>
+                        <div class="detalle-porcentaje">00.00%</div>
+                        <div style="margin-top: 10px;">
+                            <span class="organismo gftau">000 (00%)</span>
+                            <span class="organismo gftau">000 (00%)</span>
+                        </div>
+                    </div>
+                    <div class="detalle">
+                        <div class="detalle-label">SFDR</div>
+                        <div class="detalle-valor">00</div>
+                        <div class="detalle-porcentaje">0000%</div>
+                        <div style="margin-top: 10px;">
+                            <span class="organismo sfdr">000 (00%)</span>
+                            <span class="organismo sfdr">000 (00%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caja: Retenciones (lado derecho) - contiene los dos cuadritos internos -->
+            <div class="control-item">
+                <div class="item-icon">
+                </div>
+                <div class="item-detalles">
+
+                    <!-- Alcoholemia y Sustancias -->
+                    <div class="detalle inner-box">
+                        <img src="IMAGENES/alcoholimetro_azul.png"  width="100" height="90">
+                        <div class="detalle-label">Alcoholemia Positiva</div>
+                        <div class="detalle-valor" id="alc_pos">00</div>
+                    </div>
+
+                    <div class="detalle inner-box">
+                        <img src="IMAGENES/Sustancias_azul.png" width="100" height="90">
+                        <div class="detalle-label">Sustancias Positivas</div>
+                        <div class="detalle-valor" id="sus_pos">00</div>
+                    </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===TABLA DE REGIONES=== -->
+        <div class="tabla-regiones">
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">REGIÓN</th>
+                        <th colspan="3">CARGAS</th>
+                        <th colspan="3">PASAJEROS</th>
+                        <th colspan="3">TOTAL</th>
+                    </tr>
+                    <tr>
+                        <th>REGIÓN</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th>VC</th>
+                        <th>ACTAS</th>
+                        <th>RET</th>
+                        <th>VC</th>
+                        <th>ACTAS</th>
+                        <th>RET</th>
+                        <th>VC</th>
+                        <th>ACTAS</th>
+                        <th>RET</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="region-label">AMBA</td>
+                        <td class="region-label">TOTAL AMBA</td>
+
+                        <td id="amba_cargas_vc">0</td>
+                        <td id="amba_cargas_actas">0</td>
+                        <td id="amba_cargas_ret">0</td>
+
+                        <td id="amba_pasajeros_vc">0</td>
+                        <td id="amba_pasajeros_actas">0</td>
+                        <td id="amba_pasajeros_ret">0</td>
+
+                        <td id="amba_total_vc">0</td>
+                        <td id="amba_total_actas">0</td>
+                        <td id="amba_total_ret">0</td>
+                        </tr>
+
+                        <tr>
+                        <td class="region-label">CEN</td>
+                        <td class="region-label">TOTAL CENTRO</td>
+
+                        <td id="cen_cargas_vc">0</td>
+                        <td id="cen_cargas_actas">0</td>
+                        <td id="cen_cargas_ret">0</td>
+
+                        <td id="cen_pasajeros_vc">0</td>
+                        <td id="cen_pasajeros_actas">0</td>
+                        <td id="cen_pasajeros_ret">0</td>
+
+                        <td id="cen_total_vc">0</td>
+                        <td id="cen_total_actas">0</td>
+                        <td id="cen_total_ret">0</td>
+                        </tr>
+
+                        <tr>
+                        <td class="region-label">CUY</td>
+                        <td class="region-label">TOTAL CUYO</td>
+
+                        <td id="cuy_cargas_vc">0</td>
+                        <td id="cuy_cargas_actas">0</td>
+                        <td id="cuy_cargas_ret">0</td>
+
+                        <td id="cuy_pasajeros_vc">0</td>
+                        <td id="cuy_pasajeros_actas">0</td>
+                        <td id="cuy_pasajeros_ret">0</td>
+
+                        <td id="cuy_total_vc">0</td>
+                        <td id="cuy_total_actas">0</td>
+                        <td id="cuy_total_ret">0</td>
+                        </tr>
+
+                        <tr>
+                        <td class="region-label">NEA</td>
+                        <td class="region-label">TOTAL NEA</td>
+
+                        <td id="nea_cargas_vc">0</td>
+                        <td id="nea_cargas_actas">0</td>
+                        <td id="nea_cargas_ret">0</td>
+
+                        <td id="nea_pasajeros_vc">0</td>
+                        <td id="nea_pasajeros_actas">0</td>
+                        <td id="nea_pasajeros_ret">0</td>
+
+                        <td id="nea_total_vc">0</td>
+                        <td id="nea_total_actas">0</td>
+                        <td id="nea_total_ret">0</td>
+                        </tr>
+
+                        <tr>
+                        <td class="region-label">NOA</td>
+                        <td class="region-label">TOTAL NOA</td>
+
+                        <td id="noa_cargas_vc">0</td>
+                        <td id="noa_cargas_actas">0</td>
+                        <td id="noa_cargas_ret">0</td>
+
+                        <td id="noa_pasajeros_vc">0</td>
+                        <td id="noa_pasajeros_actas">0</td>
+                        <td id="noa_pasajeros_ret">0</td>
+
+                        <td id="noa_total_vc">0</td>
+                        <td id="noa_total_actas">0</td>
+                        <td id="noa_total_ret">0</td>
+                        </tr>
+
+                        <tr>
+                        <td class="region-label">PAT</td>
+                        <td class="region-label">TOTAL PATAGONIA</td>
+
+                        <td id="pat_cargas_vc">0</td>
+                        <td id="pat_cargas_actas">0</td>
+                        <td id="pat_cargas_ret">0</td>
+
+                        <td id="pat_pasajeros_vc">0</td>
+                        <td id="pat_pasajeros_actas">0</td>
+                        <td id="pat_pasajeros_ret">0</td>
+
+                        <td id="pat_total_vc">0</td>
+                        <td id="pat_total_actas">0</td>
+                        <td id="pat_total_ret">0</td>
+                        </tr>
+
+                        <tr class="total-row">
+
+                        <td colspan="2">TOTAL</td>
+
+                        <td id="total_cargas_vc">0</td>
+                        <td id="total_cargas_actas">0</td>
+                        <td id="total_cargas_ret">0</td>
+
+                        <td id="total_pasajeros_vc">0</td>
+                        <td id="total_pasajeros_actas">0</td>
+                        <td id="total_pasajeros_ret">0</td>
+
+                        <td id="total_vc">0</td>
+                        <td id="total_actas">0</td>
+                        <td id="total_ret">0</td>
+
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        
+
         </div>
 
 
@@ -952,15 +962,107 @@
                         </div>
                     </div>
 
-                <div class="definicion-hito">
-                    <h3>Definición de Hito Crítico</h3>
-                    <p>Cada punto en el mapa representa un evento con relevancia jurídica:</p>
-                    <ul>
-                        <li><strong>Alcoholemia positiva:</strong> Validada por medición técnica con resultado de infracción</li>
-                        <li><strong>Detección de sustancias:</strong> Identificación de psicoactivos en análisis de control</li>
-                        <li><strong>Retención efectiva:</strong> Retención del vehículo o desafectación del conductor</li>
-                    </ul>
+                
+        <!-- =================DASHBOARD COMPARATIVA ================= -->
+
+   <!-- ================= BOTONES ================= -->
+
+<div class="header-controls"
+     style="justify-content: center; margin-bottom: 20px;">
+
+    <button id="btn-operativo"
+        class="section-btn active"
+        onclick="mostrarSeccion('operativo')">
+
+        Vista Operativa
+
+    </button>
+
+    <button id="btn-comparativa"
+        class="section-btn"
+        onclick="mostrarSeccion('comparativa')">
+
+        
+
+        Vista Comparativa
+
+    </button>
+
+</div>
+
+<!-- =========================================
+     SECCIÓN OPERATIVA
+========================================= -->
+
+<div id="seccion-operativo">
+
+    <!-- TODO TU DASHBOARD ACTUAL -->
+
+</div>
+
+<!-- =========================================
+     SECCIÓN COMPARATIVA
+========================================= -->
+
+<div id="seccion-comparativa"
+     class="comparativas-section"
+     style="display: none;">
+
+    <!-- CARDS -->
+
+    <section class="summary-cards"
+             id="summaryCardsAcademic">
+
+    </section>
+
+    <!-- GRÁFICOS -->
+
+    <section class="charts-grid">
+
+        <div class="chart-card">
+
+            <div class="chart-header">
+
+                <h2>Acumulado Comparativa</h2>
+
+                <span class="badge badge-purple">
+                    Comparativa
+                </span>
+
+            </div>
+
+            <div class="chart-container">
+
+                <canvas id="chartCumulative"></canvas>
+
+            </div>
+
+        </div>
+
+        <div class="chart-card gantt-card">
+            <div class="chart-header">
+                <div>
+                    <h2>Timeline Operativo por Región</h2>
+                    <p class="gantt-subtitle">Intensidad operativa por fecha y región. El tamaño y el color reflejan volumen de VC, actas y retenciones.</p>
                 </div>
+            </div>
+
+            <div class="comparativa-range-summary">
+                <div>Rango seleccionado: <strong id="ganttDateRange">No definido</strong></div>
+                <div>Puntos operativos: <strong id="ganttTotalPoints">0</strong></div>
+            </div>
+
+            <div class="chart-container gantt-container">
+                <canvas id="chartGantt"></canvas>
+            </div>
+
+            <div id="ganttErrorMessage" class="gantt-error-message" role="alert" aria-live="polite"></div>
+        </div>
+
+    </section>
+
+</div>
+
             </div>
         </div>
 
@@ -973,930 +1075,347 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
-
-// =============================
-// CONVERTIR FECHA
-// =============================
-
-function convertirFecha(fechaStr){
-
-    if(!fechaStr) return null;
-
-    // yyyy-mm-dd
-    if(fechaStr.includes("-")){
-
-        const partes = fechaStr.split("-");
-
-        return new Date(
-            partes[0],
-            partes[1] - 1,
-            partes[2]
-        );
-    }
-
-    // dd/mm/yyyy
-    if(fechaStr.includes("/")){
-
-        const partes = fechaStr.split("/");
-
-        return new Date(
-            partes[2],
-            partes[1] - 1,
-            partes[0]
-        );
-    }
-
-    return null;
-}
-
-async function generarInforme() {
-    console.log("Generando informe desde Flask...");
-
-    try {
-        const response = await fetch("http://127.0.0.1:5000/resumen");
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const data = await response.json();
-        const gen = data.resumen_general || {};
-        const resumenReg = data.resumen_por_region || {};
-
-        const totalVC = gen.total_vc || 0;
-        const totalCargas = gen.cargas_vc || 0;
-        const totalPasajeros = gen.pasajeros_vc || 0;
-        const totalRetenciones = gen.retenciones || 0;
-
-        const totalActas = Object.values(resumenReg).reduce((sum, region) => {
-            return sum + ((region.total && region.total.actas) || 0);
-        }, 0);
-
-        if (document.getElementById("vc_total")) {
-            document.getElementById("vc_total").innerText = totalVC.toLocaleString();
-        }
-        if (document.getElementById("vc_cargas_un")) {
-            document.getElementById("vc_cargas_un").innerText = totalCargas.toLocaleString();
-        }
-        if (document.getElementById("vc_pasajeros_un")) {
-            document.getElementById("vc_pasajeros_un").innerText = totalPasajeros.toLocaleString();
-        }
-        if (document.getElementById("vc_ret_valor")) {
-            document.getElementById("vc_ret_valor").innerText = totalRetenciones.toLocaleString();
-        }
-        if (document.getElementById("vc_actas_valor")) {
-            document.getElementById("vc_actas_valor").innerText = totalActas.toLocaleString();
-        }
-
-        const pctCargas = totalVC > 0 ? Math.round((totalCargas / totalVC) * 100) : 0;
-        const pctPasajeros = totalVC > 0 ? Math.round((totalPasajeros / totalVC) * 100) : 0;
-
-        if (document.getElementById("vc_cargas_pct")) {
-            const barraCargas = document.getElementById("vc_cargas_pct");
-            barraCargas.innerText = pctCargas + "%";
-            barraCargas.style.flexBasis = pctCargas + "%";
-        }
-        if (document.getElementById("vc_pasajeros_pct")) {
-            const barraPasajeros = document.getElementById("vc_pasajeros_pct");
-            barraPasajeros.innerText = pctPasajeros + "%";
-            barraPasajeros.style.flexBasis = pctPasajeros + "%";
-        }
-
-        console.log("Informe generado:", { totalVC, totalCargas, totalPasajeros, totalRetenciones });
-    } catch (error) {
-        console.error("Error al generar informe:", error);
-        alert("Error al generar informe. Revisa si Flask está corriendo en http://127.0.0.1:5000");
+// 1. FUNCIÓN PARA FORMATEAR NÚMEROS (PUNTOS DE MILES)
+function escribir(id, valor) {
+    var el = document.getElementById(id);
+    if (el) {
+        // Usamos parseInt para asegurar que el valor sea un número antes de formatear
+        var num = parseInt(valor) || 0;
+        el.textContent = num.toLocaleString("es-AR");
     }
 }
 
-// =============================
-// ACTUALIZAR BARRA VC DESDE JSON
-// =============================
-
-async function actualizarBarraVC() {
-    try {
-        const response = await fetch("http://127.0.0.1:5000/resumen");
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-
-        const gen = data.resumen_general || {};
-        const totalCargas = gen.cargas_vc || 0;
-        const totalPasajeros = gen.pasajeros_vc || 0;
-        const totalVC = gen.total_vc || 0;
-        const totalRetenciones = gen.retenciones || 0;
-
-        const pctCargas = totalVC > 0 ? Math.round((totalCargas / totalVC) * 100) : 0;
-        const pctPasajeros = totalVC > 0 ? Math.round((totalPasajeros / totalVC) * 100) : 0;
-
-        if (document.getElementById("vc_cargas_pct")) {
-            document.getElementById("vc_cargas_pct").innerText = pctCargas + "%";
-        }
-        if (document.getElementById("vc_pasajeros_pct")) {
-            document.getElementById("vc_pasajeros_pct").innerText = pctPasajeros + "%";
-        }
-        if (document.getElementById("vc_cargas_un")) {
-            document.getElementById("vc_cargas_un").innerText = totalCargas.toLocaleString();
-        }
-        if (document.getElementById("vc_pasajeros_un")) {
-            document.getElementById("vc_pasajeros_un").innerText = totalPasajeros.toLocaleString();
-        }
-        if (document.getElementById("vc_total")) {
-            document.getElementById("vc_total").innerText = totalVC.toLocaleString();
-        }
-        if (document.getElementById("vc_ret_valor")) {
-            document.getElementById("vc_ret_valor").innerText = totalRetenciones.toLocaleString();
-        }
-
-        if (document.getElementById("vc_cargas_pct")) {
-            const barraCargas = document.getElementById("vc_cargas_pct");
-            barraCargas.style.flexBasis = pctCargas + "%";
-        }
-        if (document.getElementById("vc_pasajeros_pct")) {
-            const barraPasajeros = document.getElementById("vc_pasajeros_pct");
-            barraPasajeros.style.flexBasis = pctPasajeros + "%";
-        }
-
-        console.log("✅ Barra VC actualizada");
-    } catch (e) {
-        console.error("❌ Error al actualizar barra VC:", e);
-    }
-}
-
-// Llamar al cargar
-document.addEventListener("DOMContentLoaded", () => {
-    actualizarBarraVC();
-});
-
-</script>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="actualizar_tabla_regiones.js"></script>
-
-    <script>
-
-////////////////////////////////////////////////////////////
-// VARIABLES GLOBALES
-////////////////////////////////////////////////////////////
-
-let datosGlobales = null;
-let filtroActualTipo = "TODOS";
-
-
-////////////////////////////////////////////////////////////
-// CARGAR DATOS DESDE FLASK (BACKEND)
-////////////////////////////////////////////////////////////
-
-async function actualizarDesdeResumenesPython() {
-    try {
-        console.log("Conectando con servidor Flask...");
-
-        const response = await fetch("http://127.0.0.1:5000/resumen");
-        if (!response.ok) throw new Error("Flask no responde. ¿Está corriendo Generador.py?");
-
-        const datos = await response.json();
-        console.log("Datos frescos recibidos:", datos);
-
-        const gen = datos.resumen_general || {};
-        const resumenReg = datos.resumen_por_region || {};
-
-        const actualizarTexto = (id, valor) => {
-            const el = document.getElementById(id);
-            if (el) el.textContent = Number(valor || 0).toLocaleString();
-        };
-
-        actualizarTexto("vc_total", gen.total_vc);
-        actualizarTexto("vc_cargas_un", gen.cargas_vc);
-        actualizarTexto("vc_pasajeros_un", gen.pasajeros_vc);
-        actualizarTexto("vc_ret_valor", gen.retenciones);
-
-        const totalActas = Object.values(resumenReg).reduce((sum, region) => {
-            return sum + ((region.total && region.total.actas) || 0);
-        }, 0);
-        actualizarTexto("vc_actas_valor", totalActas);
-
-        const totalVC = gen.total_vc || 0;
-        const pctCargas = totalVC > 0 ? Math.round((gen.cargas_vc || 0) / totalVC * 100) : 0;
-        const pctPasajeros = totalVC > 0 ? Math.round((gen.pasajeros_vc || 0) / totalVC * 100) : 0;
-
-        if (document.getElementById("vc_cargas_pct")) {
-            const barraCargas = document.getElementById("vc_cargas_pct");
-            barraCargas.textContent = pctCargas + "%";
-            barraCargas.style.flexBasis = pctCargas + "%";
-        }
-        if (document.getElementById("vc_pasajeros_pct")) {
-            const barraPasajeros = document.getElementById("vc_pasajeros_pct");
-            barraPasajeros.textContent = pctPasajeros + "%";
-            barraPasajeros.style.flexBasis = pctPasajeros + "%";
-        }
-
-        const regiones = ["amba", "cen", "cuy", "nea", "noa", "pat"];
-        regiones.forEach(region => {
-            const datosRegion = resumenReg[region.toUpperCase()];
-            if (!datosRegion) return;
-
-            actualizarTexto(`${region}_cargas_vc`, datosRegion.cargas.vc);
-            actualizarTexto(`${region}_cargas_actas`, datosRegion.cargas.actas);
-            actualizarTexto(`${region}_cargas_ret`, datosRegion.cargas.ret);
-            actualizarTexto(`${region}_pasajeros_vc`, datosRegion.pasajeros.vc);
-            actualizarTexto(`${region}_pasajeros_actas`, datosRegion.pasajeros.actas);
-            actualizarTexto(`${region}_pasajeros_ret`, datosRegion.pasajeros.ret);
-            actualizarTexto(`${region}_total_vc`, datosRegion.total.vc);
-            actualizarTexto(`${region}_total_actas`, datosRegion.total.actas);
-            actualizarTexto(`${region}_total_ret`, datosRegion.total.ret);
-        });
-
-        console.log(`Resumen para gráfico: Cargas ${gen.cargas_vc}, Pasajeros ${gen.pasajeros_vc}`);
-    } catch (error) {
-        console.error("❌ Error en la integración:", error);
-    }
-}
-        const porcActasPasajeros = totalActas > 0 ? Math.round((actasPasajeros / totalActas) * 100) : 0;
-
-        if(document.getElementById("actas_cargas_pct")) {
-            document.getElementById("actas_cargas_pct").textContent = porcActasCargas + "%";
-            document.getElementById("actas_cargas_pct").style.width = porcActasCargas + "%";
-        }
-        if(document.getElementById("actas_pasajeros_pct")) {
-            document.getElementById("actas_pasajeros_pct").textContent = porcActasPasajeros + "%";
-            document.getElementById("actas_pasajeros_pct").style.width = porcActasPasajeros + "%";
-        }
-
-        // Indicador de Retenciones en Actas
-        const porcRetActas = totalActas > 0 ? Math.round((retencionesCargas / totalActas) * 100) : 0;
-        if(document.getElementById("actas_ret_valor"))
-            document.getElementById("actas_ret_valor").textContent = retencionesCargas.toLocaleString("es-AR");
-        if(document.getElementById("actas_ret_porc"))
-            document.getElementById("actas_ret_porc").textContent = porcRetActas + "%";
-
-        // Actualizar indicador externo de Actas
-        if(document.getElementById("actas_valor_ind"))
-            document.getElementById("actas_valor_ind").textContent = actasCargas.toLocaleString("es-AR");
-        if(document.getElementById("actas_porc_ind"))
-            document.getElementById("actas_porc_ind").textContent = porcActasCargas + "%";
-
-        //////////////////////////////////////////////////////
-        // RETENCIONES
-        //////////////////////////////////////////////////////
-
-        const totalRetenciones = data.retenciones?.total ?? 0;
-        const retencionesCargas = data.retenciones?.cargas ?? 0;
-        const retencionesPasajeros = data.retenciones?.pasajeros ?? 0;
-
-        if(document.getElementById("ret_total"))
-            document.getElementById("ret_total").textContent = totalRetenciones.toLocaleString("es-AR");
-
-        // Porcentajes de retenciones
-        const porcRetCargas = totalRetenciones > 0 ? Math.round((retencionesCargas / totalRetenciones) * 100) : 0;
-        const porcRetPasajeros = totalRetenciones > 0 ? Math.round((retencionesPasajeros / totalRetenciones) * 100) : 0;
-
-        if(document.getElementById("retenciones_cargas_pct")) {
-            document.getElementById("retenciones_cargas_pct").textContent = porcRetCargas + "%";
-            document.getElementById("retenciones_cargas_pct").style.width = porcRetCargas + "%";
-        }
-        if(document.getElementById("retenciones_pasajeros_pct")) {
-            document.getElementById("retenciones_pasajeros_pct").textContent = porcRetPasajeros + "%";
-            document.getElementById("retenciones_pasajeros_pct").style.width = porcRetPasajeros + "%";
-        }
-
-        // Indicador de Actas en Retenciones
-        const porcActasRet = totalRetenciones > 0 ? Math.round((actasCargas / totalRetenciones) * 100) : 0;
-        if(document.getElementById("ret_actas_valor"))
-            document.getElementById("ret_actas_valor").textContent = actasCargas.toLocaleString("es-AR");
-        if(document.getElementById("ret_actas_porc"))
-            document.getElementById("ret_actas_porc").textContent = porcActasRet + "%";
-
-        // Actualizar indicador externo de Retenciones
-        if(document.getElementById("retenciones_valor_ind"))
-            document.getElementById("retenciones_valor_ind").textContent = retencionesCargas.toLocaleString("es-AR");
-        if(document.getElementById("retenciones_porc_ind"))
-            document.getElementById("retenciones_porc_ind").textContent = porcRetCargas + "%";
-
-        //////////////////////////////////////////////////////
-        // INFRACCIONES
-        //////////////////////////////////////////////////////
-
-        const infracciones = data.infracciones || {
-            total: data.actas?.total ?? 0,
-            cargas: data.actas?.cargas ?? 0,
-            pasajeros: data.actas?.pasajeros ?? 0
-        };
-
-        const infraccionesTotal = infracciones.total ?? (infracciones.cargas + infracciones.pasajeros);
-        const infraccionesCargas = infracciones.cargas ?? 0;
-        const infraccionesPasajeros = infracciones.pasajeros ?? 0;
-
-        if(document.getElementById("infracciones_total"))
-            document.getElementById("infracciones_total").textContent = infraccionesTotal.toLocaleString("es-AR");
-        if(document.getElementById("infracciones_cargas_un"))
-            document.getElementById("infracciones_cargas_un").textContent = infraccionesCargas.toLocaleString("es-AR");
-        if(document.getElementById("infracciones_pasajeros_un"))
-            document.getElementById("infracciones_pasajeros_un").textContent = infraccionesPasajeros.toLocaleString("es-AR");
-
-        const porcInfCargas = infraccionesTotal > 0 ? Math.round((infraccionesCargas / infraccionesTotal) * 100) : 0;
-        const porcInfPasajeros = infraccionesTotal > 0 ? Math.round((infraccionesPasajeros / infraccionesTotal) * 100) : 0;
-
-        if(document.getElementById("infracciones_cargas_pct")) {
-            document.getElementById("infracciones_cargas_pct").textContent = porcInfCargas + "%";
-            document.getElementById("infracciones_cargas_pct").style.width = porcInfCargas + "%";
-        }
-        if(document.getElementById("infracciones_pasajeros_pct")) {
-            document.getElementById("infracciones_pasajeros_pct").textContent = porcInfPasajeros + "%";
-            document.getElementById("infracciones_pasajeros_pct").style.width = porcInfPasajeros + "%";
-        }
-
-        crearGraficoInfracciones(infraccionesCargas, infraccionesPasajeros);
-
-        //////////////////////////////////////////////////////
-        // INCIDENCIAS
-        //////////////////////////////////////////////////////
-
-        const incidencias = data.incidencias || {};
-
-        if(document.getElementById("alcPos"))
-            document.getElementById("alcPos").textContent =
-            incidencias.alcoholemia_positiva ?? 0;
-
-        if(document.getElementById("sustancias_positivas"))
-            document.getElementById("sustancias_positivas").textContent =
-            incidencias.sustancias_positivas ?? 0;
-
-        if(document.getElementById("retAlc"))
-            document.getElementById("retAlc").textContent =
-            incidencias.retenciones_alcoholemia ?? 0;
-
-        if(document.getElementById("retSus"))
-            document.getElementById("retSus").textContent =
-            incidencias.retenciones_sustancias ?? 0;
-
-        if(document.getElementById("alc_pos"))
-            document.getElementById("alc_pos").textContent =
-            incidencias.alcoholemia_positiva ?? 0;
-
-        if(document.getElementById("sus_pos"))
-            document.getElementById("sus_pos").textContent =
-            incidencias.sustancias_positivas ?? 0;
-
-        if(document.getElementById("alc_ret"))
-            document.getElementById("alc_ret").textContent =
-            incidencias.retenciones_alcoholemia ?? 0;
-
-        if(document.getElementById("sus_ret"))
-            document.getElementById("sus_ret").textContent =
-            incidencias.retenciones_sustancias ?? 0;
-
-        // Crear gráficos
-        crearGraficoVehiculos(data);
-        crearGraficoVC(cargas, totalVC);
-        crearGraficoActas(actasCargas, totalActas);
-        crearGraficoRetenciones(retencionesCargas, totalRetenciones);
-
-    }
-
-    catch (error) {
-        console.error("Error cargando datos:", error);
-    }
-
-}
-
-function inicializarResumenRegiones() {
-    const regiones = ["AMBA", "CEN", "CUY", "NEA", "NOA", "PAT"];
-    const resumen = {};
-
-    regiones.forEach(region => {
-        resumen[region] = {
-            CARGAS: { vc: 0, actas: 0, ret: 0 },
-            PASAJEROS: { vc: 0, actas: 0, ret: 0 }
-        };
-    });
-
-    return resumen;
-}
-
-function normalizarRegion(regionRaw) {
-    const raw = String(regionRaw || "").trim().toUpperCase();
-    const mapa = {
-        AMBA: "AMBA",
-        CEN: "CEN",
-        COSTA: "CEN",
-        BA: "CEN",
-        CUY: "CUY",
-        NEA: "NEA",
-        NOA: "NOA",
-        PAT: "PAT",
-        PATAGONIA: "PAT"
-    };
-    return mapa[raw] || raw;
-}
-
-function normalizarTransporte(transporteRaw) {
-    const raw = String(transporteRaw || "").trim().toUpperCase();
-    return raw === "PASAJEROS" ? "PASAJEROS" : "CARGAS";
-}
-
-function tieneActa(registro) {
-    const valor = registro.articulo ?? registro.items;
-    if (valor === undefined || valor === null) return false;
-    if (Array.isArray(valor)) return valor.length > 0;
-    return String(valor).trim() !== "";
-}
-
-function calcularResumenRegiones(registros) {
-    const resumenPorRegion = inicializarResumenRegiones();
-    const totalesGenerales = {
-        CARGAS: { vc: 0, actas: 0, ret: 0 },
-        PASAJEROS: { vc: 0, actas: 0, ret: 0 },
-        TOTAL: { vc: 0, actas: 0, ret: 0 }
-    };
-
-    if (!Array.isArray(registros)) {
-        return { resumenPorRegion, totalesGenerales };
-    }
-
-    registros.forEach(registro => {
-        const region = normalizarRegion(registro.regional ?? registro.region ?? registro.región);
-        if (!resumenPorRegion[region]) return;
-
-        const tipo = normalizarTransporte(registro.transporte);
-        const esActa = tieneActa(registro) ? 1 : 0;
-        const esRetencion = String(registro.retiene ?? "").trim().toUpperCase() === "SI" ? 1 : 0;
-
-        resumenPorRegion[region][tipo].vc += 1;
-        resumenPorRegion[region][tipo].actas += esActa;
-        resumenPorRegion[region][tipo].ret += esRetencion;
-    });
-
-    Object.keys(resumenPorRegion).forEach(region => {
-        const cargas = resumenPorRegion[region].CARGAS;
-        const pasajeros = resumenPorRegion[region].PASAJEROS;
-
-        totalesGenerales.CARGAS.vc += cargas.vc;
-        totalesGenerales.CARGAS.actas += cargas.actas;
-        totalesGenerales.CARGAS.ret += cargas.ret;
-
-        totalesGenerales.PASAJEROS.vc += pasajeros.vc;
-        totalesGenerales.PASAJEROS.actas += pasajeros.actas;
-        totalesGenerales.PASAJEROS.ret += pasajeros.ret;
-
-        totalesGenerales.TOTAL.vc += cargas.vc + pasajeros.vc;
-        totalesGenerales.TOTAL.actas += cargas.actas + pasajeros.actas;
-        totalesGenerales.TOTAL.ret += cargas.ret + pasajeros.ret;
-    });
-
-    return { resumenPorRegion, totalesGenerales };
-}
-
-function actualizarTablaRegionesDesdeRegistros(resumenPorRegion, totalesGenerales) {
-    function setTexto(id, valor) {
-        const elemento = document.getElementById(id);
-        if (!elemento) return;
-        elemento.textContent = Number(valor).toLocaleString("es-AR");
-    }
-
-    const regiones = Object.keys(resumenPorRegion);
-
-    regiones.forEach(region => {
-        const datos = resumenPorRegion[region];
-        const totalRegion = {
-            vc: datos.CARGAS.vc + datos.PASAJEROS.vc,
-            actas: datos.CARGAS.actas + datos.PASAJEROS.actas,
-            ret: datos.CARGAS.ret + datos.PASAJEROS.ret
-        };
-
-        setTexto(`${region.toLowerCase()}_cargas_vc`, datos.CARGAS.vc);
-        setTexto(`${region.toLowerCase()}_cargas_actas`, datos.CARGAS.actas);
-        setTexto(`${region.toLowerCase()}_cargas_ret`, datos.CARGAS.ret);
-
-        setTexto(`${region.toLowerCase()}_pasajeros_vc`, datos.PASAJEROS.vc);
-        setTexto(`${region.toLowerCase()}_pasajeros_actas`, datos.PASAJEROS.actas);
-        setTexto(`${region.toLowerCase()}_pasajeros_ret`, datos.PASAJEROS.ret);
-
-        setTexto(`${region.toLowerCase()}_total_vc`, totalRegion.vc);
-        setTexto(`${region.toLowerCase()}_total_actas`, totalRegion.actas);
-        setTexto(`${region.toLowerCase()}_total_ret`, totalRegion.ret);
-    });
-
-    setTexto("total_cargas_vc", totalesGenerales.CARGAS.vc);
-    setTexto("total_cargas_actas", totalesGenerales.CARGAS.actas);
-    setTexto("total_cargas_ret", totalesGenerales.CARGAS.ret);
-
-    setTexto("total_pasajeros_vc", totalesGenerales.PASAJEROS.vc);
-    setTexto("total_pasajeros_actas", totalesGenerales.PASAJEROS.actas);
-    setTexto("total_pasajeros_ret", totalesGenerales.PASAJEROS.ret);
-
-    setTexto("total_vc", totalesGenerales.TOTAL.vc);
-    setTexto("total_actas", totalesGenerales.TOTAL.actas);
-    setTexto("total_ret", totalesGenerales.TOTAL.ret);
-}
-
-////////////////////////////////////////////////////////////
-// funcion para crear gráfico de vehículos controlados (doughnut)
-////////////////////////////////////////////////////////////
-let graficoVC = null;
-
-function crearGraficoVC(valor = 0, total = 100){
-
-    const canvas = document.getElementById("grafico-vc");
-
-    if(!canvas) {
-        console.log("No existe canvas grafico-vc");
-        return;
-    }
-
-    const ctx = canvas.getContext("2d");
-
-    const resto = Math.max(total - valor, 0);
-
-    // destruir si ya existe
-    if(graficoVC){
-        graficoVC.destroy();
-    }
-
-    graficoVC = new Chart(ctx,{
-
-        type:"doughnut",
-
-        data:{
-            labels:["Cargas","Pasajeros"],
-            datasets:[{
-                data:[valor, resto],
-                backgroundColor:[
-                    "#1f3558",
-                    "#c9cfe6"
-                ],
-                borderWidth:0
-            }]
-        },
-
-        options:{
-            responsive:true,
-            maintainAspectRatio:false,
-            cutout:"70%",
-            animation:false,
-            plugins:{
-                legend:{display:false}
-            }
-        }
-
-    });
-
-}
-
-////////////////////////////////////////////////////////////
-// CREAR GRÁFICO DE VEHÍCULOS
-////////////////////////////////////////////////////////////
-
-function crearGraficoVehiculos(data){
-
-    const ctx = document.getElementById('graficoRegiones');
-    if(!ctx) return;
-
-    new Chart(ctx,{
-        type:'line',
-        data:{
-            labels:data.grafico_fechas || [],
-            datasets:[{
-                label:'Vehículos controlados',
-                data:data.grafico_valores || [],
-
-                borderColor:'#3fb6ad',
-                backgroundColor:'rgba(63,182,173,0.45)',
-
-                fill:true,
-                tension:0.4,
-                pointRadius:4,
-                pointBackgroundColor:'#3fb6ad'
-            }]
-        },
-        options:{
-            responsive:true,
-            plugins:{
-                legend:{
-                    labels:{
-                        color:'#e8e8e8'
-                    }
-                }
-            },
-            scales:{
-                x:{
-                    ticks:{
-                        color:'#cfcfcf'
-                    },
-                    grid:{
-                        color:'rgba(255,255,255,0.05)'
-                    }
-                },
-                y:{
-                    ticks:{
-                        color:'#cfcfcf'
-                    },
-                    grid:{
-                        color:'rgba(255,255,255,0.05)'
-                    }
-                }
-            }
-        }
-    });
-
-}
-
-////////////////////////////////////////////////////////////
-// GRAFICO DONUT ACTAS
-////////////////////////////////////////////////////////////
-
-let graficoActas = null;
-
-function crearGraficoActas(cargas = 0, total = 100){
-
-const ctx = document.getElementById('grafico-actas');
-
-if(!ctx) return;
-
-const pasajeros = Math.max(total - cargas, 0);
-
-// Destruir si ya existe
-if(graficoActas) {
-    graficoActas.destroy();
-}
-
-graficoActas = new Chart(ctx,{
-type:'doughnut',
-data:{
-labels:['Cargas','Pasajeros'],
-datasets:[{
-data:[cargas, pasajeros],
-backgroundColor:[
-'#1f3558',
-'#c9cfe6'
-]
-}]
-},
-options:{
-responsive:true,
-maintainAspectRatio:false,
-cutout:'70%',
-animation:false,
-plugins:{
-legend:{display:false}
-}
-}
-});
-
-}
-
-////////////////////////////////////////////////////////////
-// GRAFICO DONUT RETENCIONES
-////////////////////////////////////////////////////////////
-
-let graficoRetenciones = null;
-
-function crearGraficoRetenciones(cargas = 0, total = 100){
-
-const ctx = document.getElementById('grafico-retenciones');
-
-if(!ctx) return;
-
-const pasajeros = Math.max(total - cargas, 0);
-
-// Destruir si ya existe
-if(graficoRetenciones) {
-    graficoRetenciones.destroy();
-}
-
-graficoRetenciones = new Chart(ctx,{
-type:'doughnut',
-data:{
-labels:['Cargas','Pasajeros'],
-datasets:[{
-data:[cargas, pasajeros],
-backgroundColor:[
-'#1f3558',
-'#c9cfe6'
-]
-}]
-},
-options:{
-responsive:true,
-maintainAspectRatio:false,
-cutout:'70%',
-animation:false,
-plugins:{
-legend:{display:false}
-}
-}
-});
-
-}
-
-// =============================
-// DONUT VC CARGAS
-// =============================
-
-function crearGraficoVCCargas(){
-
-const ctx = document.getElementById("grafico-vc-cargas");
-
-if(!ctx) return;
-
-new Chart(ctx,{
-type:"doughnut",
-data:{
-labels:["GFTAU","Otros"],
-datasets:[{
-data:[70,30],
-backgroundColor:[
-"#2d4a87",
-"#8faadc"
-]
-}]
-},
-options:{
-cutout:"60%",
-plugins:{
-legend:{display:false}
-}
-}
-});
-
-}
-
-// =============================
-// DONUT VC PASAJEROS
-// =============================
-
-function crearGraficoVCPasajeros(){
-
-const ctx = document.getElementById("grafico-vc-pasajeros");
-
-if(!ctx) return;
-
-new Chart(ctx,{
-type:"doughnut",
-data:{
-labels:["SFDR","Otros"],
-datasets:[{
-data:[65,35],
-backgroundColor:[
-"#2d4a87",
-"#f1b51c"
-]
-}]
-},
-options:{
-cutout:"60%",
-plugins:{
-legend:{display:false}
-}
-}
-});
-
-}
-
-document.addEventListener("DOMContentLoaded",function(){
-    actualizarDesdeResumenesPython();
-});
-
-////////////////////////////////////////////////////////////
-// GRAFICO DONUT - PRINCIPALES INFRACCIONES
-////////////////////////////////////////////////////////////
-let graficoInfracciones = null;
-
-function crearGraficoInfracciones(cargas = 0, pasajeros = 0) {
-    const canvas = document.getElementById("graficoInfracciones");
+// 2. FUNCIÓN PRINCIPAL DE CARGA (CORREGIDA PARA TU ESTRUCTURA)
+function actualizarDashboard() {
+    console.log("Conectando con Flask en http://127.0.0.1:5000/resumen...");
     
-    if (!canvas) {
-        console.log("Canvas graficoInfracciones no encontrado");
-        return;
-    }
+    fetch("/resumen")
+        .then(function(response) {
+            if (!response.ok) throw new Error("Error en la conexión con el servidor");
+            return response.json();
+        })
+        .then(function(data) {
+            console.log("Datos recibidos del servidor:", data);
 
-    const ctx = canvas.getContext("2d");
-    const datosCargas = cargas;
-    const datosPasajeros = pasajeros;
+            var meta = data.metadata || {}; 
+            var regionesData = data.regiones || {}; 
 
-    if (graficoInfracciones) {
-        graficoInfracciones.destroy();
-    }
+            // Extraer valores desde "metadata"
+            var totalVC = parseInt(meta.total_registros) || 0;
+            var totalRetenciones = parseInt(meta.total_retenciones) || 0;
+            
+            // Para Cargas y Pasajeros, sumamos los totales de las regiones
+            var totalCargas = 0;
+            var totalPasajeros = 0;
+            var totalActas = 0;
 
-    graficoInfracciones = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-            labels: ["Cargas", "Pasajeros"],
-            datasets: [{
-                data: [datosCargas, datosPasajeros],
-                backgroundColor: [
-                    "#292a4e",
-                    "#7e7f93"
-                ],
-                borderColor: [
-                    "#ffffff",
-                    "#ffffff"
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            cutout: "65%",
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.label + ": " + context.parsed + " actas";
-                        }
-                    }
+            var keys = Object.keys(regionesData);
+            for (var i = 0; i < keys.length; i++) {
+                var r = regionesData[keys[i]];
+                if (r) {
+                    totalCargas += (parseInt(r.cargas?.vc) || 0);
+                    totalPasajeros += (parseInt(r.pasajeros?.vc) || 0);
+                    totalActas += (parseInt(r.total?.actas) || 0);
                 }
             }
-        }
-    });
-}
 
-// =============================
-// FUNCIÓN PARA EXPANDIR/CONTRAER MAPA
-// =============================
-function toggleMapa() {
-    const contenedor = document.getElementById("contenedor-mapa");
-    const icono = document.getElementById("icono-expandir");
+            // --- ACTUALIZAR VALORES EN PANTALLA ---
+            escribir("vc_total", totalVC);
+            escribir("vc_cargas_un", totalCargas);
+            escribir("vc_pasajeros_un", totalPasajeros);
+            escribir("vc_ret_valor", totalRetenciones);
+            escribir("vc_actas_valor", totalActas);
+
+            // --- BARRAS DE PORCENTAJE ---
+            var pctCargas = totalVC > 0 ? Math.round((totalCargas / totalVC) * 100) : 0;
+            var pctPasajeros = totalVC > 0 ? Math.round((totalPasajeros / totalVC) * 100) : 0;
+
+            var vCargas = document.getElementById("vc_cargas_pct");
+            if (vCargas) {
+                vCargas.innerText = pctCargas + "%";
+                vCargas.style.flexBasis = pctCargas + "%";
+            }
+            var vPasajeros = document.getElementById("vc_pasajeros_pct");
+            if (vPasajeros) {
+                vPasajeros.innerText = pctPasajeros + "%";
+                vPasajeros.style.flexBasis = pctPasajeros + "%";
+            }
+
+            // --- TABLA DE REGIONES ---
+            // --- TABLA DE REGIONES (Versión Final Blindada) ---
+        var listaRegiones = ["AMBA", "CEN", "CUY", "NEA", "NOA", "COSTA", "PAT"];
+
+        listaRegiones.forEach(function(r) {
+        // 1. Buscamos el dato en el JSON siempre usando MAYÚSCULAS
+        var dReg = regionesData[r.toUpperCase()]; 
     
-    if (contenedor.classList.contains("contenedor-mapa-oculto")) {
-        contenedor.classList.remove("contenedor-mapa-oculto");
-        contenedor.classList.add("contenedor-mapa-visible");
-        icono.classList.add("icono-rotated");
+        if (dReg) {
+        // 2. Definimos el ID del HTML siempre en minúsculas
+        var idBase = r.toLowerCase(); 
+
+        // 3. Escribimos los datos (Cargas, Pasajeros y Totales)
+        escribir(idBase + "cargas_vc", dReg.cargas.vc);
+        escribir(idBase + "cargas_actas", dReg.cargas.actas);
+        escribir(idBase + "cargas_ret", dReg.cargas.ret);
+        
+        escribir(idBase + "pasajeros_vc", dReg.pasajeros.vc);
+        escribir(idBase + "pasajeros_actas", dReg.pasajeros.actas);
+        escribir(idBase + "pasajeros_ret", dReg.pasajeros.ret);
+        
+        escribir(idBase + "total_vc", dReg.total.vc);
+        escribir(idBase + "total_actas", dReg.total.actas);
+        escribir(idBase + "total_ret", dReg.total.ret);
     } else {
-        contenedor.classList.add("contenedor-mapa-oculto");
-        contenedor.classList.remove("contenedor-mapa-visible");
-        icono.classList.remove("icono-rotated");
+        console.warn("No se encontraron datos para la región:", r);
     }
-}
-
-// =============================
-// SCRIPT PARA DESCARGAR EL INFORME EN PDF
-// =============================
-async function descargarPDF(){
-
-    console.log("Generando PDF...");
-
-    const { jsPDF } = window.jspdf;
-
-    const informe = document.getElementById("informe");
-
-    if(!informe){
-        alert("No se encontró el informe");
-        return;
-    }
-
-    const canvas = await html2canvas(informe, {
-        scale: 2,
-        useCORS: true,
-        scrollY: -window.scrollY
     });
 
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF("p", "mm", "a4");
-
-    const pageWidth = 210;
-    const pageHeight = 297;
-
-    const imgWidth = pageWidth;
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-
-    let heightLeft = imgHeight;
-
-    let position = 0;
-
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-
-    heightLeft -= pageHeight;
-
-    while (heightLeft > 0) {
-
-        position = heightLeft - imgHeight;
-
-        pdf.addPage();
-
-        pdf.addImage(
-            imgData,
-            "PNG",
-            0,
-            position,
-            imgWidth,
-            imgHeight
-        );
-
-        heightLeft -= pageHeight;
-    }
-
-    pdf.save("Informe_CNRT.pdf");
-
+            console.log("✅ Dashboard actualizado con metadata y regiones.");
+        })
+        .catch(function(err) {
+            console.error("❌ Error detectado:", err);
+        });
 }
-
 </script>
 
-</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const boton = document.getElementById("btn-generar");
+    if (boton) {
+      boton.addEventListener("click", () => {
+        const desde = document.getElementById("fecha_desde").value;
+        const hasta = document.getElementById("fecha_hasta").value;
+
+        if (!desde || !hasta) {
+          alert("Por favor, seleccioná un intervalo de fechas.");
+          return;
+        }
+
+        generarInformeOperativo();
+      });
+    }
+  });
+
+  // ========================================================
+  // TODO: Gráfico Gantt / Timeline Operativo
+  // ========================================================
+
+  let ganttChart = null;
+  const REGION_ORDER = ["AMBA", "COSTA", "CEN", "CUY", "NEA", "NOA", "PAT"];
+  const REGION_PALETTE = {
+    "AMBA": "#0f4c81",
+    "COSTA": "#047857",
+    "CEN": "#6847d8",
+    "CUY": "#d97706",
+    "NEA": "#0f766e",
+    "NOA": "#7c3aed",
+    "PAT": "#1d4ed8"
+  };
+
+  function generarInformeOperativo() {
+    actualizarDashboard();
+    generarGraficoGantt();
+  }
+
+  async function generarGraficoGantt() {
+    const desde = document.getElementById("fecha_desde").value;
+    const hasta = document.getElementById("fecha_hasta").value;
+    const errorBox = document.getElementById("ganttErrorMessage");
+    const rangeLabel = document.getElementById("ganttDateRange");
+    const countLabel = document.getElementById("ganttTotalPoints");
+
+    if (errorBox) {
+      errorBox.textContent = "";
+    }
+    if (rangeLabel) {
+      rangeLabel.textContent = `${desde} — ${hasta}`;
+    }
+
+    if (!desde || !hasta) {
+      if (errorBox) {
+        errorBox.textContent = "Seleccioná un rango de fechas válido para cargar la vista comparativa.";
+      }
+      return;
+    }
+
+    try {
+      const response = await fetch(`/timeline?desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}`);
+      if (!response.ok) {
+        throw new Error(`Error de servidor ${response.status}`);
+      }
+
+      const payload = await response.json();
+      if (payload.error) {
+        throw new Error(payload.error);
+      }
+      if (!Array.isArray(payload.timeline)) {
+        throw new Error("El servidor no entregó la estructura de timeline esperada.");
+      }
+
+      if (countLabel) {
+        countLabel.textContent = payload.timeline.length.toString();
+      }
+
+      renderGanttChart(payload.timeline);
+    } catch (error) {
+      console.error("Error generando gráfico Gantt:", error);
+      if (errorBox) {
+        errorBox.textContent = "No se pudo cargar el gráfico comparativo. " + error.message;
+      }
+    }
+  }
+
+  function renderGanttChart(data) {
+    const canvas = document.getElementById("chartGantt");
+    if (!canvas) return;
+
+    if (ganttChart) {
+      ganttChart.destroy();
+      ganttChart = null;
+    }
+
+    const points = data
+      .map(item => {
+        const region = item.region || item.regional || "SIN_REGION";
+        const regionIndex = REGION_ORDER.indexOf(region);
+        if (regionIndex < 0) {
+          return null;
+        }
+
+        return {
+          x: Date.parse(item.fecha),
+          y: regionIndex,
+          r: calcularRadioPunto(item.vc, item.actas, item.retenciones),
+          region: region,
+          vc: item.vc,
+          actas: item.actas,
+          retenciones: item.retenciones,
+          color: REGION_PALETTE[region] || "#64748b"
+        };
+      })
+      .filter(Boolean);
+
+    const datasets = REGION_ORDER.map(region => ({
+      label: region,
+      data: points.filter(point => point.region === region),
+      backgroundColor: REGION_PALETTE[region] + "cc",
+      borderColor: REGION_PALETTE[region],
+      borderWidth: 1,
+      hoverRadius: 12,
+      pointStyle: "rectRounded"
+    })).filter(dataset => dataset.data.length > 0);
+
+    const minDate = Math.min(...points.map(point => point.x));
+    const maxDate = Math.max(...points.map(point => point.x));
+
+    ganttChart = new Chart(canvas, {
+      type: "bubble",
+      data: {
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: {
+              usePointStyle: true,
+              boxWidth: 10,
+              padding: 12
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const point = context.raw || {};
+                const date = new Date(point.x);
+                return [
+                  `Región: ${point.region}`,
+                  `Fecha: ${date.toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })}`,
+                  `VC: ${point.vc}`,
+                  `Actas: ${point.actas}`,
+                  `Retenciones: ${point.retenciones}`
+                ];
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: "linear",
+            position: "bottom",
+            title: {
+              display: true,
+              text: "Fecha"
+            },
+            ticks: {
+              callback: function(value) {
+                const date = new Date(value);
+                if (isNaN(date)) return "";
+                return date.toLocaleDateString("es-AR", { day: "2-digit", month: "short" });
+              },
+              maxRotation: 0,
+              autoSkip: true,
+              maxTicksLimit: 8
+            },
+            min: minDate,
+            max: maxDate
+          },
+          y: {
+            type: "category",
+            labels: REGION_ORDER,
+            title: {
+              display: true,
+              text: "Región"
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function calcularRadioPunto(vc, actas, retenciones) {
+    const intensidad = Number(vc || 0) + Number(actas || 0) * 1.8 + Number(retenciones || 0) * 2.4;
+    return Math.min(20, Math.max(6, Math.round(6 + Math.log10(intensidad + 1) * 6)));
+  }
+
+  // Función para cambiar entre el Dashboard de CNRT y las Comparativas
+  let comparativaInicializada = false;
+  let chartComparativa = null;
+
+  // Función para cambiar entre vistas
+  function mostrarSeccion(nombre) {
+    const operativo = document.getElementById('seccion-operativo');
+    const comparativa = document.getElementById('seccion-comparativa');
+    const botones = document.querySelectorAll('.section-btn');
+
+    botones.forEach(btn => btn.classList.remove('active'));
+
+    if (nombre === 'operativo') {
+      operativo.style.display = 'block';
+      comparativa.style.display = 'none';
+      document.getElementById('btn-operativo')?.classList.add('active');
+      return;
+    }
+
+    if (nombre === 'comparativa') {
+      operativo.style.display = 'block';
+      comparativa.style.display = 'block';
+      document.getElementById('btn-comparativa')?.classList.add('active');
+
+      if (!comparativaInicializada) {
+        iniciarComparativa();
+        comparativaInicializada = true;
+      }
+    }
+  }
+</script>
 
 </body>
-
 </html>

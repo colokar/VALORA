@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func, text
+from sqlalchemy import case, func, text
 import json
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -82,6 +83,50 @@ def get_resumen():
             'total_actas': total_actas
         }
         return jsonify(resumen), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/timeline', methods=['GET'])
+def get_timeline():
+    desde = request.args.get('desde')
+    hasta = request.args.get('hasta')
+
+    if not desde or not hasta:
+        return jsonify({'error': "Parámetros 'desde' y 'hasta' son obligatorios."}), 400
+
+    try:
+        datetime.fromisoformat(desde)
+        datetime.fromisoformat(hasta)
+    except ValueError:
+        return jsonify({'error': 'Formato de fecha inválido. Use YYYY-MM-DD.'}), 400
+
+    try:
+        query = (
+            db.session.query(
+                Registro.fecha,
+                Registro.regional,
+                func.count(Registro.id).label('vc'),
+                func.sum(case((Registro.articulo.isnot(None) & (Registro.articulo != ''), 1), else_=0)).label('actas'),
+                func.sum(case((Registro.retiene == 'SI', 1), else_=0)).label('retenciones')
+            )
+            .filter(Registro.fecha >= desde, Registro.fecha <= hasta)
+            .group_by(Registro.fecha, Registro.regional)
+            .order_by(Registro.fecha, Registro.regional)
+            .all()
+        )
+
+        timeline = [
+            {
+                'fecha': fecha,
+                'region': regional or 'SIN_REGION',
+                'vc': int(vc or 0),
+                'actas': int(actas or 0),
+                'retenciones': int(retenciones or 0)
+            }
+            for fecha, regional, vc, actas, retenciones in query
+        ]
+
+        return jsonify({'timeline': timeline}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

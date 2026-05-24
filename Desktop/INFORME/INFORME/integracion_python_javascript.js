@@ -6,8 +6,8 @@
 // generados por Python desde JavaScript.
 //
 // Flujo:
-// 1. Python ejecuta: gestor_fiscalizacion.py
-// 2. Se actualiza: datos.json con resumen_general y resumen_por_region
+// 1. Python ejecuta: generador.py
+// 2. Se actualiza: datos.json con metadata y regiones
 // 3. JavaScript fetch: datos.json
 // 4. HTML se actualiza automáticamente
 // ========================================================
@@ -26,27 +26,35 @@ async function actualizarDesdeResumenesPython() {
         const datos = await response.json();
         
         // Verificar que existen los resúmenes
-        if (!datos.resumen_general || !datos.resumen_por_region) {
-            console.warn("Advertencia: Los resúmenes no existen en datos.json");
-            console.log("Ejecuta: python gestor_fiscalizacion.py");
+        if (!datos.metadata || !datos.regiones) {
+            console.warn("Advertencia: El JSON no contiene las claves esperadas metadata/regiones");
+            console.log("Ejecuta: python generador.py");
             return;
         }
         
-        console.log("Resúmenes encontrados:");
+        console.log("Datos del generador Python encontrados:");
         
         // ====================================================
         // 1. ACTUALIZAR RESUMEN GENERAL
         // ====================================================
         
-        const resumenGeneral = datos.resumen_general;
+        const resumenGeneral = datos.metadata;
+        const regionesData = datos.regiones || {};
         
-        // Total VC
-        const totalVC = resumenGeneral.total.vc;
+        // Total VC calculado a partir de las regiones
+        const totalVC = Object.values(regionesData).reduce((sum, reg) => sum + (parseInt(reg.total?.vc) || 0), 0);
+        const vcCargas = Object.values(regionesData).reduce((sum, reg) => sum + (parseInt(reg.cargas?.vc) || 0), 0);
+        const vcPasajeros = Object.values(regionesData).reduce((sum, reg) => sum + (parseInt(reg.pasajeros?.vc) || 0), 0);
+        const totalRetenciones = parseInt(resumenGeneral.total_retenciones) || 0;
+        const totalCargasActas = Object.values(regionesData).reduce((sum, reg) => sum + (parseInt(reg.cargas?.actas) || 0), 0);
+        const totalCargasRet = Object.values(regionesData).reduce((sum, reg) => sum + (parseInt(reg.cargas?.ret) || 0), 0);
+        const totalPasajerosActas = Object.values(regionesData).reduce((sum, reg) => sum + (parseInt(reg.pasajeros?.actas) || 0), 0);
+        const totalPasajerosRet = Object.values(regionesData).reduce((sum, reg) => sum + (parseInt(reg.pasajeros?.ret) || 0), 0);
+        const totalActas = Object.values(regionesData).reduce((sum, reg) => sum + (parseInt(reg.total?.actas) || 0), 0);
+        const totalRetencionesOverall = Object.values(regionesData).reduce((sum, reg) => sum + (parseInt(reg.total?.ret) || 0), 0);
+        
         console.log(`Total VC: ${totalVC}`);
         
-        // Cargas vs Pasajeros
-        const vcCargas = resumenGeneral.cargas.vc;
-        const vcPasajeros = resumenGeneral.pasajeros.vc;
         const porcCargas = totalVC > 0 ? Math.round((vcCargas / totalVC) * 100) : 0;
         const porcPasajeros = totalVC > 0 ? Math.round((vcPasajeros / totalVC) * 100) : 0;
         
@@ -55,22 +63,22 @@ async function actualizarDesdeResumenesPython() {
             document.getElementById("vc_total").textContent = totalVC;
         }
         
-        if (document.getElementById("barra_cargas_pct")) {
-            document.getElementById("barra_cargas_pct").textContent = porcCargas + "%";
+        if (document.getElementById("vc_cargas_pct")) {
+            document.getElementById("vc_cargas_pct").textContent = porcCargas + "%";
         }
         
-        if (document.getElementById("barra_pasajeros_pct")) {
-            document.getElementById("barra_pasajeros_pct").textContent = porcPasajeros + "%";
+        if (document.getElementById("vc_pasajeros_pct")) {
+            document.getElementById("vc_pasajeros_pct").textContent = porcPasajeros + "%";
         }
         
         // ====================================================
         // 2. ACTUALIZAR TABLA POR REGIÓN
         // ====================================================
         
-        const resumenPorRegion = datos.resumen_por_region;
+        const resumenPorRegion = datos.regiones;
         
         // Regiones e sus IDs en la tabla
-        const regiones = ["AMBA", "COSTA", "BA", "CEN", "CUY", "NEA", "NOA", "PAT"];
+        const regiones = ["AMBA", "COSTA", "CEN", "CUY", "NEA", "NOA", "PAT"];
         
         regiones.forEach(region => {
             
@@ -99,17 +107,17 @@ async function actualizarDesdeResumenesPython() {
         // 3. ACTUALIZAR TOTALES GENERALES EN TABLA
         // ====================================================
         
-        actualizarCelda("total_cargas_vc", resumenGeneral.cargas.vc);
-        actualizarCelda("total_cargas_actas", resumenGeneral.cargas.actas);
-        actualizarCelda("total_cargas_ret", resumenGeneral.cargas.ret);
+        actualizarCelda("total_cargas_vc", vcCargas);
+        actualizarCelda("total_cargas_actas", totalCargasActas);
+        actualizarCelda("total_cargas_ret", totalCargasRet);
         
-        actualizarCelda("total_pasajeros_vc", resumenGeneral.pasajeros.vc);
-        actualizarCelda("total_pasajeros_actas", resumenGeneral.pasajeros.actas);
-        actualizarCelda("total_pasajeros_ret", resumenGeneral.pasajeros.ret);
+        actualizarCelda("total_pasajeros_vc", vcPasajeros);
+        actualizarCelda("total_pasajeros_actas", totalPasajerosActas);
+        actualizarCelda("total_pasajeros_ret", totalPasajerosRet);
         
-        actualizarCelda("total_vc", resumenGeneral.total.vc);
-        actualizarCelda("total_actas", resumenGeneral.total.actas);
-        actualizarCelda("total_ret", resumenGeneral.total.ret);
+        actualizarCelda("total_vc", totalVC);
+        actualizarCelda("total_actas", totalActas);
+        actualizarCelda("total_ret", totalRetencionesOverall);
         
         console.log("Tabla actualizada exitosamente");
         
@@ -147,8 +155,8 @@ async function generarInformeModerno() {
     console.log("Generando informe...");
     
     // Obtener fechas del HTML
-    const fechaDesde = document.getElementById("desde")?.value;
-    const fechaHasta = document.getElementById("hasta")?.value;
+    const fechaDesde = document.getElementById("fecha_desde")?.value;
+    const fechaHasta = document.getElementById("fecha_hasta")?.value;
     
     console.log(`Fechas: ${fechaDesde} a ${fechaHasta}`);
     
