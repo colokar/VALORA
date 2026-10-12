@@ -1,0 +1,35 @@
+/* globals.css — Tailwind v4 */
+@import "tailwindcss";
+
+/* Agregá este bloque @theme (fusionalo si ya tenés uno) */
+@theme {
+  --color-navy: #16233f;
+  --color-navy-2: #1e2f55;
+  --color-navy-3: #22345e;
+  --color-green: #1fa971;
+  --color-green-dark: #178a5c;
+  --color-orange: #f2a93b;
+  --color-red: #e2574c;
+  --color-canvas: #f6f8fc;
+  --color-muted: #5b6b85;
+  --color-line: #e4e9f2;
+
+  --animate-float-y: float-y 4.5s ease-in-out infinite;
+  --animate-float-y-delay: float-y 4.5s ease-in-out 1.2s infinite;
+  --animate-float-y-rotate: float-y-rotate 5s ease-in-out infinite;
+  --animate-fade-in-up: fade-in-up 0.7s ease both;
+}
+
+/* Los keyframes van fuera de @theme, como CSS normal */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes float-y-rotate {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-12px) rotate(-2deg); }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
